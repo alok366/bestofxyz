@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * Best Of Xyz CLI — Artisan Entry Point
+ *
+ * Usage: php artisan <command> [arguments] [options]
+ *
+ * Commands are registered via Framework\Console\CommandRegistry.
+ * Each command is a class implementing Framework\Console\CommandInterface.
+ */
+
+if (php_sapi_name() !== 'cli') :
+    die("This script must be run from the command line.");
+endif;
+
+// Bootstrap CLI environment (autoload, .env, config, Eloquent, events)
+require __DIR__ . '/framework/Bootstrap/cli.php';
+
+use Framework\Console\CommandRegistry;
+use Framework\Console\Commands\MigrateCommand;
+use Framework\Console\Commands\MakeMigrationCommand;
+use Framework\Console\Commands\OptimizeClearCommand;
+use Framework\Console\Commands\StorageLinkCommand;
+use Framework\Console\Commands\TestListCommand;
+use Framework\Console\Commands\TestCommand;
+use Framework\Console\Commands\ChecksCommand;
+use Framework\Console\Commands\DocsCommand;
+use Framework\Console\Commands\QueueFailedCommand;
+use Framework\Console\Commands\QueueRetryCommand;
+use Framework\Console\Commands\CacheSessionsCommand;
+use Framework\Console\Commands\MakeModelCommand;
+use Framework\Console\Commands\MakeControllerCommand;
+use Framework\Console\Commands\MakeServiceCommand;
+use Framework\Console\Commands\MakeRepositoryCommand;
+use Framework\Console\Commands\MakeTransformerCommand;
+use Framework\Console\Commands\MakeModuleCommand;
+use Framework\Console\Commands\WorkerCommand;
+use Framework\Console\Commands\JwtSecretCommand;
+
+$migrationsPath = __DIR__ . '/database/migrations/';
+
+// Register commands
+$registry = new CommandRegistry();
+$registry->register(new MigrateCommand($migrationsPath));
+$registry->register(new MakeMigrationCommand($migrationsPath));
+$registry->register(new OptimizeClearCommand());
+$registry->register(new StorageLinkCommand());
+$registry->register(new TestListCommand());
+$registry->register(new TestCommand());
+$registry->register(new ChecksCommand());
+$registry->register(new DocsCommand());
+$registry->register(new QueueFailedCommand());
+$registry->register(new QueueRetryCommand());
+$registry->register(new CacheSessionsCommand());
+$registry->register(new MakeModelCommand());
+$registry->register(new MakeControllerCommand());
+$registry->register(new MakeServiceCommand());
+$registry->register(new MakeRepositoryCommand());
+$registry->register(new MakeTransformerCommand());
+$registry->register(new MakeModuleCommand());
+$registry->register(new WorkerCommand());
+$registry->register(new JwtSecretCommand());
+
+// Resolve and run
+$command = $argv[1] ?? '';
+$args = array_slice($argv, 2);
+
+if (empty($command)) :
+    echo "\033[34mBestOfXyz CLI\033[0m" . PHP_EOL;
+    $registry->listCommands();
+    exit(0);
+endif;
+
+$exitCode = $registry->run($command, $args);
+exit($exitCode);

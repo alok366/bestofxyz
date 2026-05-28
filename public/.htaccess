@@ -1,0 +1,125 @@
+Options -Indexes
+
+DirectoryIndex index.php
+
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Pass Authorization header to PHP
+    RewriteCond %{HTTP:Authorization} ^(.*)
+    RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
+    # Tracy assets - do not upload to production
+    RewriteCond %{QUERY_STRING} _tracy_bar
+    RewriteRule ^(.*)$ index.php [QSA,L]
+
+    # --------------------------------------------------
+    # AJAX routes (ajax.php/path passes through to ajax.php)
+    # --------------------------------------------------
+    RewriteRule ^ajax\.php(/.*)?$ ajax.php [NC,L,QSA]
+
+    # --------------------------------------------------
+    # API v4 routes
+    # --------------------------------------------------
+    RewriteRule ^api/v4/public(/.*)?$ api.php [NC,L]
+    RewriteRule ^api/v4(/.*)?$ api.php [NC,L]
+    RewriteRule ^api/v4/admin(/.*)?$ api.php [NC,L]
+
+    # --------------------------------------------------
+    # Auth routes (JWT token endpoints)
+    # --------------------------------------------------
+    RewriteRule ^auth(/.*)?$ api.php [NC,L]
+
+    # --------------------------------------------------
+    # Optin routes
+    # --------------------------------------------------
+    RewriteRule ^optin/v4(/.*)?$ optin.php [NC,L,QSA]
+
+    # --------------------------------------------------
+    # Allow access to Tracy's log directory
+    # --------------------------------------------------
+    RewriteRule ^storage/logs/errors/(.*)$ - [L]
+
+    # --------------------------------------------------
+    # Redirect Trailing Slashes
+    # --------------------------------------------------
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+    # --------------------------------------------------
+    # Front Controller
+    # --------------------------------------------------
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^([A-Za-z0-9-]+)/?$ index.php?p=$1 [NC,L]
+    RewriteRule ^([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/?$ index.php?p=$1&sp=$2 [NC,L]
+    RewriteRule ^([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/?$ index.php?p=$1&sp=$2&param1=$3 [NC,L]
+    RewriteRule ^([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/?$ index.php?p=$1&sp=$2&param1=$3&param2=$4 [NC,L]
+    RewriteRule ^([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/?$ index.php?p=$1&sp=$2&param1=$3&param2=$4&param3=$5 [NC,L]
+    RewriteRule ^([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/([A-Za-z0-9-]+)/?$ index.php?p=$1&sp=$2&param1=$3&param2=$4&param3=$5&param4=$6 [NC,L]
+
+    # Serve static assets directly if they exist
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^(.*)$ $1 [QSA,L]
+</IfModule>
+
+# --------------------------------------------------
+# Cache Control
+# --------------------------------------------------
+SetEnvIf Host ^localhost$ no_cache=1
+<FilesMatch "\.(js|css)$">
+    Header set Cache-Control "max-age=86400, public" env=!no_cache
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" env=no_cache
+</FilesMatch>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access 1 week"
+    ExpiresByType text/html "access 1 week"
+    ExpiresByType text/php "access 1 hour"
+    ExpiresByType text/x-javascript "access 1 week"
+    ExpiresByType image/x-icon "access 1 month"
+    ExpiresDefault "access 1 month"
+</IfModule>
+
+# --------------------------------------------------
+# Compression
+# --------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+    AddOutputFilterByType DEFLATE application/x-font
+    AddOutputFilterByType DEFLATE application/x-font-opentype
+    AddOutputFilterByType DEFLATE application/x-font-otf
+    AddOutputFilterByType DEFLATE application/x-font-truetype
+    AddOutputFilterByType DEFLATE application/x-font-ttf
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE font/opentype
+    AddOutputFilterByType DEFLATE font/otf
+    AddOutputFilterByType DEFLATE font/ttf
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE image/x-icon
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/javascript
+</IfModule>
+
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css
+    AddOutputFilterByType BROTLI_COMPRESS application/javascript application/x-javascript text/javascript
+    AddOutputFilterByType BROTLI_COMPRESS application/json
+    AddOutputFilterByType BROTLI_COMPRESS image/svg+xml
+</IfModule>
+
+<IfModule mod_mime.c>
+    AddType text/javascript js mjs
+</IfModule>
+
+# Ensure correct MIME types for fonts
+AddType application/font-woff2 .woff2
+AddType application/font-woff .woff
+AddType application/vnd.ms-fontobject .eot
+AddType application/x-font-ttf .ttf
+AddType font/opentype .otf

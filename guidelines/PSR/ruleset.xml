@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<ruleset name="App PSR Standards">
+    <description>Best Of XYZ PHP PSR Standards (PSR-only, with specific exclusions)</description>
+
+    <rule ref="PSR1"/>
+    <rule ref="PSR12">
+        <exclude name="PSR12.Files.DeclareStrictTypes.Missing"/>
+        <exclude name="PSR12.Files.OpenTag.NotFound"/>
+        <exclude name="Generic.Files.LineLength"/>
+        <exclude name="Generic.Files.LineLength.TooLong"/>        
+    </rule>
+
+    <exclude name="Generic.PHP.ClosingTag.NotFound"/>
+    <exclude name="Generic.Files.FileName.NotMatch"/>
+    <exclude name="Generic.Files.LineLength"/>
+    <exclude name="Generic.Files.LineLength.TooLong"/>
+
+    <rule ref="Generic.NamingConventions.CamelCapsFunctionName">
+        <properties>
+            <property name="strict" value="true"/>
+        </properties>
+    </rule>
+
+    <rule ref="PSR1.Methods.CamelCapsMethodName"/>
+    <rule ref="PSR1.Classes.ClassDeclaration"/>
+
+    <arg name="extensions" value="php"/>
+</ruleset>

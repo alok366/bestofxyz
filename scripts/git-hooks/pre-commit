@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Lint staged LESS files in the new layer only (Core/Components/Pages).
+# Legacy folders are ignored via .stylelintignore.
+
+STAGED_LESS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^resources/less/(Core|Components|Pages)/.*\.less$')
+
+if [ -z "$STAGED_LESS" ]; then
+  exit 0
+fi
+
+echo "Running Stylelint on staged LESS files..."
+echo "$STAGED_LESS" | xargs npx stylelint
+STATUS=$?
+
+if [ $STATUS -ne 0 ]; then
+  echo ""
+  echo "CSS REJECTED: Fix the Stylelint errors above, or run: npm run lint:css:fix"
+  exit 1
+fi
+
+echo "CSS LINT OKAY."
+exit 0

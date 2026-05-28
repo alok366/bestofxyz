@@ -1,0 +1,21 @@
+#!/bin/sh
+
+echo "Running Architecture scan..."
+
+npm run checks:controller
+CONTROLLER_STATUS=$?
+
+npm run checks:service
+SERVICE_STATUS=$?
+
+npm run checks:transformer
+TRANSFORMER_STATUS=$?
+
+if [ $CONTROLLER_STATUS -ne 0 ] || [ $SERVICE_STATUS -ne 0 ] || [ $TRANSFORMER_STATUS -ne 0 ]; then
+  echo ""
+  echo "CODE REJECTED: Please fix the issues above before pushing."
+  exit 1
+fi
+
+echo "CODE SCAN OKAY: Pushing..."
+exit 0

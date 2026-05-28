@@ -1,0 +1,6 @@
+# Allow direct access to docs — override root rewrite rules
+RewriteEngine On
+RewriteRule ^(.*)$ - [L]
+
+Options +Indexes
+DirectoryIndex index.html index.php

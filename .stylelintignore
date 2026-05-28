@@ -1,0 +1,9 @@
+# Legacy LESS — phased out, not lint-cleaned. See .claude/plans/project_less_architecture.md
+resources/less/modules/
+resources/less/theme/
+resources/less/fonts/
+
+# Compiled output and vendor
+public/
+node_modules/
+storage/

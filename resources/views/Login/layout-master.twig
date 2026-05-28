@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{metaTitle}}</title>
+        <base href="{{baseURL}}">
+
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="Cache-Control" content="max-age=0, must-revalidate">
+        
+        <meta name="csrf-token" content="{{csrf}}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ assetUrl }}/images/favicons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" href="{{ assetUrl }}/images/favicons/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="{{ assetUrl }}/images/favicons/favicon-16x16.png" sizes="16x16">
+        <link rel="manifest" href="{{ assetUrl }}/images/favicons/manifest.json">
+        <link rel="mask-icon" href="{{ assetUrl }}/images/favicons/safari-pinned-tab.svg" color="#5bbad5">
+        <meta name="theme-color" content="#ffffff">
+
+
+        
+        <link href="/dist/css/bundle.css?v={{static}}" rel="stylesheet" />
+        
+    </head>
+
+    <body id="login_splash_page">
+
+        {% block body %} {% endblock %}
+        {% include 'Login/_Includes/foo.twig' %}
+        
+    <script src="{{ assetUrl }}/js/jquery-3.5.0.min.js?v=#{{static}}"></script> 
+    <script src="{{ assetUrl }}/js/popper.min.js?v={{static }}"></script> 
+    <script src="{{ assetUrl }}/js/bootstrap.min.js?v={{static }}"></script> 
+
+    <script type="module" src="{{ mix('login-bundle.js') }}" ></script>
+
+    {% block scripts %}  {% endblock %}
+   </body>
+</html>

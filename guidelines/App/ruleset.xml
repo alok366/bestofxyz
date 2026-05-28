@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ruleset name="Guidelines">
+    <description>App coding standard.</description>
+    <rule ref="App.Architecture.NoModelsInControllers"/>
+    <rule ref="App.Architecture.NoRepositoriesInControllers"/>
+    <rule ref="App.Architecture.NoTransformersInServices"/>
+    <rule ref="App.Architecture.NoServicesInTransformers"/>
+    <rule ref="App.Architecture.NoInstanceInTransformers"/>
+
+    <rule ref="App.Architecture.NoNewInConstructors"/>
+    <rule ref="App.Architecture.EnforceAlternativeControlSyntax"/>
+</ruleset>

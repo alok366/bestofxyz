@@ -1,0 +1,39 @@
+# ============================================================
+# Root .htaccess — Safety Net
+# ============================================================
+# The DocumentRoot should be public/. This file exists as a
+# fallback to protect sensitive files if the server config
+# ever points to the project root instead.
+# ============================================================
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to sensitive files
+    RewriteRule ^\.env - [F,L]
+    RewriteRule ^composer\.(json|lock)$ - [F,L]
+    RewriteRule ^package(-lock)?\.json$ - [F,L]
+    RewriteRule ^webpack\.mix\.js$ - [F,L]
+
+    RewriteRule ^artisan$ - [F,L]
+
+    # Block direct access to sensitive directories
+    RewriteRule ^system/ - [F,L]
+    RewriteRule ^framework/ - [F,L]
+    RewriteRule ^vendor/ - [F,L]
+    RewriteRule ^config/ - [F,L]
+    RewriteRule ^workers/ - [F,L]
+    RewriteRule ^tests/ - [F,L]
+    RewriteRule ^database/ - [F,L]
+    RewriteRule ^guidelines/ - [F,L]
+    RewriteRule ^routes/ - [F,L]
+    RewriteRule ^app/ - [F,L]
+    RewriteRule ^resources/ - [F,L]
+    RewriteRule ^storage/ - [F,L]
+
+    # Route everything else to public/
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
