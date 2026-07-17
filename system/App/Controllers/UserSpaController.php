@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-class HomeController extends BaseController
+class UserSpaController extends BaseController
 {
 
     public function __construct()
@@ -10,11 +10,17 @@ class HomeController extends BaseController
         parent::__construct();
     }
 
-
-    public function showHomeTimeline()
+    /**
+     * Render the User SPA shell.
+     *
+     * @return string
+     */
+    public function shell(): string
     {
+
         return $this->twig->render('User/spa-shell.twig', [
-            'csrf_token' => $this->getCsrfToken()
+            'pageTitle' => 'PerkZilla',
+            'pageSlug'  => 'spa',
         ]);
     }
 

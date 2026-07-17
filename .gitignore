@@ -1,5 +1,3 @@
-.claude/
-CLAUDE.md
 .vscode/*
 .DS_Store
 .phpunit.result.cache
@@ -8,7 +6,10 @@ CLAUDE.md
 .env.development
 .env.testing
 
+plan.txt
+
 vendor/*
+architecture/*
 node_modules/*
 node_modules
 package-lock.json

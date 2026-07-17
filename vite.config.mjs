@@ -1,34 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 import { resolve } from 'path';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-import { readFileSync } from 'fs';
-import babel from '@rollup/plugin-babel';
-
-/**
- * Custom plugin: imports .html files as raw strings.
- * Replaces Webpack's html-loader behavior for builder templates.
- */
-function htmlRawPlugin() {
-  return {
-    name: 'html-raw-import',
-    enforce: 'pre',
-    resolveId(source, importer) {
-      if (source.endsWith('.html') && importer && !source.startsWith('\0')) {
-        const resolved = resolve(importer, '..', source);
-        // Use .js extension in virtual ID to prevent Vite's HTML plugin from triggering
-        return '\0html-raw:' + resolved.replace(/\.html$/, '.rawhtml.js');
-      }
-    },
-    load(id) {
-      if (id.startsWith('\0html-raw:')) {
-        const filePath = id.slice('\0html-raw:'.length).replace(/\.rawhtml\.js$/, '.html');
-        const content = readFileSync(filePath, 'utf-8');
-        return `export default ${JSON.stringify(content)};`;
-      }
-    },
-  };
-}
-
 
 export default defineConfig(({ mode }) => {
   // Load env vars so __ASSET_URL__ define works
@@ -47,6 +19,13 @@ export default defineConfig(({ mode }) => {
       __ASSET_URL__: JSON.stringify(env.MIX_ASSET_URL || ''),
       // Webpack polyfilled Node's `global` as `window` — Vite doesn't
       global: 'window',
+    },
+    resolve: {
+      alias: {
+        '@Core': resolve(__dirname, 'resources/js/Core'),
+        '@User': resolve(__dirname, 'resources/js/User'),
+        '@Components': resolve(__dirname, 'resources/js/Components'),
+      },
     },
 
     css: {
@@ -78,9 +57,7 @@ export default defineConfig(({ mode }) => {
           defaultHandler(warning);
         },
         input: {
-              'login-bundle': resolve(__dirname, 'resources/js/User/Login.js'),
-              'fe-js/bundle': resolve(__dirname, 'resources/js/User/App.js'),
-              'be-js/bundle': resolve(__dirname, 'resources/js/Admin/App.js'),
+              'fe-js/bundle': resolve(__dirname, 'resources/js/User/App.jsx')
             },
 
         output: {
@@ -95,31 +72,5 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-
-    // Let Babel handle JSX — preserves .babelrc dual pragma
-    // (jsx-no-react default + Preact h overrides for 14 directories)
-    esbuild: {
-      jsx: 'preserve',
-    },
-
-    plugins: [
-      // Import .html files as raw strings (replaces Webpack html-loader)
-      htmlRawPlugin(),
-
-      // Babel for JSX transformation — respects .babelrc overrides
-      babel({
-        babelHelpers: 'bundled',
-        extensions: ['.js', '.jsx'],
-        exclude: 'node_modules/**',
-      }),
-
-      // Font copying — replaces mix.copy() calls
-      viteStaticCopy({
-        targets: [
-          { src: 'resources/less/fonts/*', dest: 'fonts' },
-        ],
-      }),
-
-    ],
   };
 });
