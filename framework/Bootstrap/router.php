@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Routing\Router;
-use Framework\Services\TwigService;
 use Framework\Http\Middleware\CorsMiddleware;
 use Framework\Http\Middleware\AuthenticateAdminMiddleware;
 use Framework\Http\Middleware\ApiMiddleware;
@@ -11,9 +10,6 @@ use Framework\Http\Middleware\JwtAuthMiddleware;
 
 global $container, $events;
 
-$container->singleton('twig', function() {
-    return TwigService::getInstance();
-});
 
 $container->singleton('auth', function() {
     return new \App\Services\AuthService();

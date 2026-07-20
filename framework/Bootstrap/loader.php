@@ -80,14 +80,3 @@ $userResolver = function () {
 
 $sessionActive = session_status() === PHP_SESSION_ACTIVE;
 $gdprAccepted = $sessionActive && ((!empty($_SESSION['login']->gdpr)) || (!empty($_SESSION['gdprok'])));
-
-$twigGlobalData = [
-    'baseURL' => \Utils\UrlUtil::baseUrl(),
-    'assetUrl' => config('app.asset_url'),
-    'metaTitle' => config('app.title'),
-    'csrf' => $sessionActive ? ($_SESSION['csrf_token'] ?? '') : '',
-    'isGDPRAccepted' => $gdprAccepted,
-    'isGDPRNotAccepted' => !$gdprAccepted,
-    'static' => config('app.static_version'),
-    'scripts' => "",
-];

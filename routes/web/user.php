@@ -11,13 +11,13 @@ use App\Controllers\UserSpaController;
  * shell. Preact-router owns URL matching client-side; unknown paths
  * fall through to the NotFound component.
  */
-$router->get('/{any?}', [UserSpaController::class, 'shell'])->where('any', '.*');
+$router->get('/{any?}', [UserSpaController::class, 'renderApp'])->where('any', '.*');
 $router->get('/logout', [AuthController::class, 'logout'])->middleware('start.session');
 
 /**
  * Authenticated web routes. Most paths are served by the User SPA shell
  * walkthrough, redirect handlers, and file exports stay as server-side
- * routes because they use a different twig layout or return non-HTML.
+ * routes because they return non-HTML.
  */
 $router->group(['middleware' => ['start.session', 'csrf']], function ($router) {});
 

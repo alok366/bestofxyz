@@ -13,28 +13,6 @@ class AuthController extends BaseController
         parent::__construct();
     }
 
-
-    public function showLogin()
-    {
-        // Prevent caching of login page
-        header('Cache-Control: no-cache, no-store, must-revalidate');
-        header('Pragma: no-cache');
-        header('Expires: 0');
-
-        $isSumoling = !empty($_GET['appsumo']) ? true : false;
-        $isWrongCredentials = false;
-
-        if (isset($_SESSION['wpass'])) :
-            $isWrongCredentials = true;
-            unset($_SESSION['wpass']);
-        endif;
-
-        return $this->twig->render('Login/regular.twig', [
-            'isSumoling' => $isSumoling,
-            'isWrongCredentials' => $isWrongCredentials,
-        ]);
-    }
-
     // ── JWT Token Endpoints ────────────────────────────────────────────
 
     /**

@@ -5,7 +5,7 @@
 | Illuminate Capsule (database connection)
 |--------------------------------------------------------------------------
 | Isolated here so it can be required independently by the test bootstrap
-| without pulling in session, Twig globals, or legacy web-app globals.
+| without pulling in session, globals, or legacy web-app globals.
 */
 
 try {

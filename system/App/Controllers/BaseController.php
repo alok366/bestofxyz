@@ -5,8 +5,6 @@ namespace App\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Services\ResponseService;
-use Framework\Services\TwigService;
-use Twig\Environment;
 use Illuminate\Validation\Factory as ValidatorFactory;
 use Illuminate\Validation\DatabasePresenceVerifier;
 use Illuminate\Translation\ArrayLoader;
@@ -15,7 +13,6 @@ use Site;
 
 abstract class BaseController
 {
-    protected Environment $twig;
     protected static $request;
     protected ResponseService $response;
     protected $auth;
@@ -28,7 +25,6 @@ abstract class BaseController
         global $container;
         global $capsule;
 
-        $this->twig = TwigService::getInstance();
         if (!self::$request) :
             self::$request = Request::capture();
         endif;
@@ -54,16 +50,5 @@ abstract class BaseController
     protected function e($value): string
     {
         return e($value);
-    }
-
-    protected function redirect(string $url = "/", int $statusCode = 302, string $userType = 'C')
-    {
-        if ($statusCode == 404) :
-            return $this->twig->render('Errors/404.twig', [
-                'userType'  => $userType,
-            ]);
-        endif;
-
-        return new RedirectResponse($url, $statusCode);
     }
 }

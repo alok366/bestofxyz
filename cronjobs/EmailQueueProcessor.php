@@ -1,6 +1,6 @@
 <?php
 
-// Bootstrap CLI environment (no sessions, Twig, or web globals)
+// Bootstrap CLI environment (no sessions, or web globals)
 require_once __DIR__ . '/../framework/Bootstrap/cli.php';
 
 use Mailer\Services\MessageQueueTriggerService;

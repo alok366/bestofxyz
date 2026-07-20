@@ -1,6 +1,5 @@
 /**
  * BestofXyz User entry — mounts the react SPA Router into #user-app
- * (served by User/spa-shell.twig). 
  *
  */
 import React from 'react';

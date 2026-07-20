@@ -5,14 +5,13 @@
  *
  * Minimal bootstrap for all command-line entry points: artisan, workers, cron jobs.
  * Loads autoloader, environment, config, Eloquent, container, and events.
- * Does NOT load sessions, Twig, Tracy, CSRF, or any web-only globals.
+ * Does NOT load sessions, Tracy, CSRF, or any web-only globals.
  *
  * Usage:
  *   require __DIR__ . '/framework/Bootstrap/cli.php';
  *
- * For commands that need Twig (email rendering in cron jobs):
+ * For commands that need (email rendering in cron jobs):
  *   require __DIR__ . '/framework/Bootstrap/cli.php';
- *   $twig = Framework\Bootstrap\CliBootstrap::bootTwig();
  */
 
 declare(strict_types=1);
@@ -21,12 +20,10 @@ namespace Framework\Bootstrap;
 
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
-use Framework\Services\TwigService;
 
 class CliBootstrap
 {
     private static bool $booted = false;
-    private static bool $twigBooted = false;
 
     /**
      * Boot the CLI environment.
@@ -71,46 +68,6 @@ class CliBootstrap
         endif;
 
         self::$booted = true;
-    }
-
-    /**
-     * Boot Twig for CLI context.
-     *
-     * Only needed by commands/crons that render templates (email markup).
-     * Call after boot().
-     *
-     * @return \Twig\Environment
-     */
-    public static function bootTwig(): \Twig\Environment
-    {
-        if (self::$twigBooted) :
-            return TwigService::getInstance();
-        endif;
-
-        // Twig globals need minimal data in CLI context — no session, no CSRF
-        $twigGlobalData = [
-            'baseURL' => \Utils\UrlUtil::baseUrl(),
-            'assetUrl' => config('app.asset_url', ''),
-            'metaTitle' => config('app.title'),
-            'csrf' => '',
-            'isGDPRAccepted' => false,
-            'isGDPRNotAccepted' => true,
-            'static' => config('app.static_version'),
-            'scripts' => '',
-        ];
-
-        $userResolver = function () {
-            return ['authenticated' => false];
-        };
-
-        TwigService::setGlobals($twigGlobalData, $userResolver);
-
-        self::$twigBooted = true;
-
-        global $twig;
-        $twig = TwigService::getInstance();
-
-        return $twig;
     }
 }
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controllers;
+use Illuminate\Http\Response;
 
 class UserSpaController extends BaseController
 {
@@ -10,18 +11,10 @@ class UserSpaController extends BaseController
         parent::__construct();
     }
 
-    /**
-     * Render the User SPA shell.
-     *
-     * @return string
-     */
-    public function shell(): string
+    public function renderApp(): Response
     {
-
-        return $this->twig->render('User/spa-shell.twig', [
-            'pageTitle' => 'PerkZilla',
-            'pageSlug'  => 'spa',
-        ]);
+        $html = file_get_contents(__DIR__ . '/../../../resources/views/User/app-shell.html');
+        return new Response($html, 200, ['Content-Type' => 'text/html']);
     }
 
     // ── CSRF Helpers ────────────────────────────────────────────────────
