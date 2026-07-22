@@ -19,6 +19,7 @@ app-shell.html
 docs/generated/*
 .phpdoc/*
 scripts/.confluence-publish-cache.json
+logs/*
 
 **/*.zip
 **/*_bck/*
