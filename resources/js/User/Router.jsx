@@ -1,5 +1,5 @@
 /**
- * User SPA Router — mounts all migrated Pages under a single react-router.
+ * User SPA Router — mounts all migrated Pages & Experiment UI/UX Sandbox pages.
  */
 import React, { useState, useEffect } from 'react';
 import {
@@ -12,53 +12,35 @@ import {
 import { Http } from '@Core/Http';
 import { Layout } from './Components/Layout';
 import { StatusMessage } from '@Components';
-import HomePage from './Pages/Home'; 
+import HomePage from './Pages/Home';
+
+// Experiment Pages
+import ExperimentIndex from './Pages/Experiment/index';
+import CategoryDirectoryMock from './Pages/Experiment/category-directory/CategoryDirectoryMock';
+import TopLevelCategoryMock from './Pages/Experiment/top-level-category/TopLevelCategoryMock';
+import SubcategoryMock from './Pages/Experiment/subcategory/SubcategoryMock';
+import ResourceDetailMock from './Pages/Experiment/resource-detail/ResourceDetailMock';
+import SubmitResourceMock from './Pages/Experiment/submit-resource/SubmitResourceMock';
+import PendingSubcategoryMock from './Pages/Experiment/pending-subcategory/PendingSubcategoryMock';
+import TeamModerationMock from './Pages/Experiment/team-moderation/TeamModerationMock';
 
 const NotFound = () => (
   <StatusMessage
     variant="notfound"
     action={
-      <a className="btn btn-primary" href="/home">
-        Back to Home
+      <a className="btn btn-primary" href="/experiment">
+        Back to Experiment Index
       </a>
     }
   />
 );
 
-/**
- * Which engine owns a URL. Drives:
- *   - Http.setMode (request headers)
- *   - Layout (GlobalFilter + sidebar section)
- */
 const engineForPath = (path) => 'broadcasts';
 
-/**
- * Route → header title map. Longest-prefix match, so sub-section paths
- * (e.g. /campaign-additional-settings/webhooks) can override the parent
- * label. Pages that want a dynamic title can still write to the h1
- * imperatively, but the static map covers every SPA route today.
- */
-const TITLES = [];
-
-const titleForPath = (path) => {
-  const match = TITLES.find(
-    ([prefix]) => path === prefix || path.startsWith(prefix + '/')
-  );
-  return match ? match[1] : '';
-};
-
-/**
- * Lives inside <BrowserRouter> so it can read the current location via
- * useLocation (the react-router-dom equivalent of preact-router's onChange).
- */
 function RouterInner({ bootstrap }) {
   const location = useLocation();
   const [currentPath, setCurrentPath] = useState(location.pathname);
 
-  // Set the mode at mount and on every route change. Running in both
-  // places keeps the first render correct (setMode only queues the
-  // header change — the first API call from a Page's useEffect
-  // happens AFTER mount).
   useEffect(() => {
     Http.setMode(engineForPath(location.pathname));
   }, []);
@@ -69,15 +51,33 @@ function RouterInner({ bootstrap }) {
     if (typeof window !== 'undefined') window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  const isExperimentRoute = location.pathname.startsWith('/experiment');
+
+  if (isExperimentRoute) {
+    return (
+      <Routes>
+        <Route path="/experiment" element={<ExperimentIndex />} />
+        <Route path="/experiment/category-directory" element={<CategoryDirectoryMock />} />
+        <Route path="/experiment/top-level-category" element={<TopLevelCategoryMock />} />
+        <Route path="/experiment/subcategory" element={<SubcategoryMock />} />
+        <Route path="/experiment/resource-detail" element={<ResourceDetailMock />} />
+        <Route path="/experiment/submit-resource" element={<SubmitResourceMock />} />
+        <Route path="/experiment/pending-subcategory" element={<PendingSubcategoryMock />} />
+        <Route path="/experiment/team-moderation" element={<TeamModerationMock />} />
+      </Routes>
+    );
+  }
+
   return (
     <Layout
       currentPath={currentPath}
-      pageTitle={titleForPath(currentPath)}
+      pageTitle="bestofxyz"
       userName={bootstrap.userName || 'User'}
       bootstrap={bootstrap}
       urlEngine={engineForPath(currentPath)}
     >
       <Routes>
+        <Route path="/" element={<Navigate to="/experiment" replace />} />
         <Route path="/dashboard" element={<HomePage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
