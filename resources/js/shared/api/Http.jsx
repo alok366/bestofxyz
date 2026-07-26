@@ -1,4 +1,5 @@
-import Logger from '@Core/Logger';
+import axios from 'axios';
+import Logger from '../lib/Logger';
 
 /**
  * Http — Promise-based API client (no envelope, no callbacks).
@@ -8,7 +9,7 @@ import Logger from '@Core/Logger';
  * via httpOnly cookies — no token storage in JS.
  *
  * Usage:
- *   import { Http } from '@Core/Http';
+ *   import { Http } from '@shared/api';
  *
  *   const campaigns = await Http.get('/campaigns');
  *   const created   = await Http.post('/campaigns', { name: 'New' });
@@ -21,9 +22,9 @@ import Logger from '@Core/Logger';
  *   const uploaded = await Http.post('/media', formData);
  */
 
-const CSRF       = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-const API_BASE   = String(import.meta.env.MIX_URL).replace(/\/+$/, '') + '/api/v4';
-const AUTH_BASE  = String(import.meta.env.MIX_URL).replace(/\/+$/, '');
+const CSRF       = typeof document !== 'undefined' ? (document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '') : '';
+const API_BASE   = String(import.meta.env.MIX_URL || '').replace(/\/+$/, '') + '/api/v4';
+const AUTH_BASE  = String(import.meta.env.MIX_URL || '').replace(/\/+$/, '');
 const DEFAULT_TIMEOUT = 15000;
 
 /**
@@ -46,10 +47,10 @@ const setMode = (mode) => {
 
 /**
  * Read the current campaign public_id from localStorage.
- * Reads directly to avoid circular imports with @User/Stores.
  */
 const getCampaignId = () => {
     try {
+        if (typeof localStorage === 'undefined') return null;
         const raw = localStorage.getItem('pkzbmerscurcamp');
         if (!raw) return null;
         const store = JSON.parse(raw);
@@ -63,15 +64,7 @@ const getCampaignId = () => {
 const getHeaders = (data, campaignOverride = null) => {
     const headers = { 'X-CSRF-TOKEN': CSRF };
 
-    // Only Growth calls carry X-Campaign-ID. Broadcasts is a separate
-    // business engine and doesn't share the Growth campaign concept.
     if (currentMode === 'growth') {
-        // A per-call campaignId (e.g. the Live Editor v2 builder, which knows
-        // its campaign from the URL) overrides the shared localStorage value.
-        // This is what lets two campaigns be edited in two tabs at once: each
-        // tab scopes its own requests instead of all tabs sharing the single
-        // per-origin localStorage campaign (the stateless-API path —
-        // ResolveCampaignMiddleware prefers the header over session).
         const campaignId = campaignOverride || getCampaignId();
         if (campaignId) {
             headers['X-Campaign-ID'] = campaignId;
@@ -87,33 +80,20 @@ const getHeaders = (data, campaignOverride = null) => {
 
 const request = async (method, endpoint, { data = null, params = null, timeout = DEFAULT_TIMEOUT, responseType = 'json', signal = null, campaignId = null } = {}) => {
     try {
-        const url = new URL(API_BASE + endpoint);
-        if (params) {
-            Object.entries(params).forEach(([key, value]) => {
-                if (value !== undefined && value !== null) {
-                    url.searchParams.append(key, String(value));
-                }
-            });
-        }
-
-        const response = await fetch(url, {
+        const response = await axios({
             method,
-            body: data instanceof FormData ? data : data ? JSON.stringify(data) : undefined,
+            url: API_BASE + endpoint,
+            params: params || undefined,
+            data: data || undefined,
             headers: getHeaders(data, campaignId),
+            timeout,
+            responseType,
             signal: signal || undefined,
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-
-        if (responseType === 'blob') {
-            return await response.blob();
-        }
-
-        return await response.json();
+        return response.data;
     } catch (err) {
-        if (err?.message?.includes('403')) {
+        if (err.response?.status === 403 && typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('pk:forbidden'));
         }
         Logger.error(err, `Http::request ${method.toUpperCase()} ${endpoint}`);
@@ -139,17 +119,15 @@ const Http = {
      */
     authenticate: async (username, password) => {
         try {
-            const response = await fetch(AUTH_BASE + '/auth/token', {
+            const response = await axios({
                 method: 'post',
-                body: JSON.stringify({ username, password }),
+                url: AUTH_BASE + '/auth/token',
+                data: { username, password },
                 headers: { 'Content-Type': 'application/json' },
+                timeout: DEFAULT_TIMEOUT,
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-
-            return await response.json();
+            return response.data;
         } catch (err) {
             Logger.error(err, 'Http::authenticate');
             throw err;
@@ -162,9 +140,11 @@ const Http = {
      */
     logout: async () => {
         try {
-            await fetch(AUTH_BASE + '/auth/logout', {
+            await axios({
                 method: 'post',
+                url: AUTH_BASE + '/auth/logout',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+                timeout: DEFAULT_TIMEOUT,
             });
         } catch (err) {
             Logger.error(err, 'Http::logout');
@@ -173,3 +153,4 @@ const Http = {
 };
 
 export { Http };
+export default Http;

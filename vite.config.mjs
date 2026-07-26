@@ -22,9 +22,14 @@ export default defineConfig(({ mode }) => {
 
     resolve: {
       alias: {
-        '@Core': resolve(__dirname, 'resources/js/Core'),
-        '@User': resolve(__dirname, 'resources/js/User'),
-        '@Components': resolve(__dirname, 'resources/js/Components'),
+        '@app': resolve(__dirname, 'resources/js/app'),
+        '@pages': resolve(__dirname, 'resources/js/pages'),
+        '@widgets': resolve(__dirname, 'resources/js/widgets'),
+        '@features': resolve(__dirname, 'resources/js/features'),
+        '@entities': resolve(__dirname, 'resources/js/entities'),
+        '@shared': resolve(__dirname, 'resources/js/shared'),
+        '@Core': resolve(__dirname, 'resources/js/shared'),
+        '@Components': resolve(__dirname, 'resources/js/shared/ui'),
       },
     },
 
@@ -51,7 +56,7 @@ export default defineConfig(({ mode }) => {
           defaultHandler(warning);
         },
         input: {
-          'fe-js/bundle': resolve(__dirname, 'resources/js/User/App.jsx'),
+          'fe-js/bundle': resolve(__dirname, 'resources/js/app/User/App.jsx'),
         },
         output: {
           entryFileNames: '[name].js',

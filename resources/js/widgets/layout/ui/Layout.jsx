@@ -1,38 +1,24 @@
 /**
- * Layout — app shell used by every SPA route.
+ * Layout — app shell widget used by SPA routes.
  *
  * Renders:
  *   - Sidebar (section driven by `urlEngine`)
  *   - Header (page title + user menu)
- *   - GlobalFilter (only shown on engines that need it — adjust the list
- *     below to match your real engines)
- *   - Main content (`children`, i.e. the routed Page)
- *
- * Props (as passed from router.js):
- *   currentPath  — string, current pathname, used to highlight nav links
- *   pageTitle    — string, shown in the header <h1>
- *   userName     — string, shown in the user menu
- *   bootstrap    — object, whatever server-rendered bootstrap data you pass in
- *   urlEngine    — string, e.g. 'broadcasts' — decides sidebar section + GlobalFilter
- *   children     — the routed page content
+ *   - GlobalFilter (only shown on engines that need it)
+ *   - Main content (`children`, i.e. routed page)
  */
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-// Adjust to your real navigation. Grouped by engine so the sidebar can
-// swap sections when `urlEngine` changes without needing separate Layouts.
 const NAV_SECTIONS = {
   broadcasts: [
     { to: '/dashboard', label: 'Dashboard' },
-    // add more broadcasts-engine routes here
   ],
 };
 
-// Engines that should show the GlobalFilter bar under the header.
-// Empty by default — flip this on per engine as you wire it up.
 const ENGINES_WITH_GLOBAL_FILTER = [];
 
-function Sidebar({ urlEngine, currentPath }) {
+function Sidebar({ urlEngine }) {
   const items = NAV_SECTIONS[urlEngine] || [];
 
   return (
@@ -88,8 +74,6 @@ function UserMenu({ userName }) {
 function GlobalFilter({ urlEngine }) {
   if (!ENGINES_WITH_GLOBAL_FILTER.includes(urlEngine)) return null;
 
-  // Placeholder implementation — replace with your real filter controls
-  // (date range, list/segment picker, etc.) once wired to actual data.
   return (
     <div className="app-globalfilter" role="region" aria-label="Filters">
       {/* filter controls go here */}
@@ -102,12 +86,11 @@ function Layout({
   currentPath,
   pageTitle,
   userName,
-  bootstrap,
   urlEngine,
 }) {
   return (
-    <div className="app-shell">
-      <Sidebar urlEngine={urlEngine} currentPath={currentPath} />
+    <div className="app-shell" data-path={currentPath}>
+      <Sidebar urlEngine={urlEngine} />
 
       <div className="app-shell__main">
         <header className="app-header">

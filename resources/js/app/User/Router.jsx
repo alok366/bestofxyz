@@ -7,12 +7,11 @@ import {
   Routes,
   Route,
   useLocation,
-  Navigate,
 } from 'react-router-dom';
-import { Http } from '@Core/Http';
-import { Layout } from './Components/Layout';
-import { StatusMessage } from '@Components';
-import HomePage from './Pages/Home'; 
+import { Http } from '@shared/api';
+import { Layout } from '@widgets/layout';
+import { StatusMessage } from '@shared/ui';
+import { HomePage } from '@pages/home';
 
 const NotFound = () => (
   <StatusMessage
@@ -26,17 +25,12 @@ const NotFound = () => (
 );
 
 /**
- * Which engine owns a URL. Drives:
- *   - Http.setMode (request headers)
- *   - Layout (GlobalFilter + sidebar section)
+ * Which engine owns a URL.
  */
-const engineForPath = (path) => 'broadcasts';
+const engineForPath = () => 'broadcasts';
 
 /**
- * Route → header title map. Longest-prefix match, so sub-section paths
- * (e.g. /campaign-additional-settings/webhooks) can override the parent
- * label. Pages that want a dynamic title can still write to the h1
- * imperatively, but the static map covers every SPA route today.
+ * Route → header title map.
  */
 const TITLES = [];
 
@@ -47,25 +41,17 @@ const titleForPath = (path) => {
   return match ? match[1] : '';
 };
 
-/**
- * Lives inside <BrowserRouter> so it can read the current location via
- * useLocation (the react-router-dom equivalent of preact-router's onChange).
- */
 function RouterInner({ bootstrap }) {
   const location = useLocation();
   const [currentPath, setCurrentPath] = useState(location.pathname);
 
-  // Set the mode at mount and on every route change. Running in both
-  // places keeps the first render correct (setMode only queues the
-  // header change — the first API call from a Page's useEffect
-  // happens AFTER mount).
   useEffect(() => {
-    Http.setMode(engineForPath(location.pathname));
+    Http.setMode(engineForPath());
   }, []);
 
   useEffect(() => {
     setCurrentPath(location.pathname);
-    Http.setMode(engineForPath(location.pathname));
+    Http.setMode(engineForPath());
     if (typeof window !== 'undefined') window.scrollTo(0, 0);
   }, [location.pathname]);
 
@@ -75,7 +61,7 @@ function RouterInner({ bootstrap }) {
       pageTitle={titleForPath(currentPath)}
       userName={bootstrap.userName || 'User'}
       bootstrap={bootstrap}
-      urlEngine={engineForPath(currentPath)}
+      urlEngine={engineForPath()}
     >
       <Routes>
         <Route path="/dashboard" element={<HomePage />} />

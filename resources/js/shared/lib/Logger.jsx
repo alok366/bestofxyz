@@ -15,12 +15,6 @@ const API_BASE = String(import.meta.env.MIX_URL || '').replace(/\/+$/, '');
 
 /**
  * Benign messages we never send to the backend log.
- *
- * These are browser warnings or normal no-op states, not real errors. They
- * used to reach _system_logs in huge volumes (one tooltip warning alone hit
- * 36k+ rows) and buried the errors that actually matter. Matched as a
- * case-insensitive substring so minor wording differences still filter. They
- * still print to the console (Tier 1) for anyone debugging locally.
  */
 const _IGNORED_MESSAGES = [
     'ResizeObserver loop completed with undelivered notifications',
@@ -110,8 +104,6 @@ const _extractMessage = (input) => {
 class Logger {
     /**
      * Debug — console only, dev mode only.
-     * For verbose development tracing.
-     *
      * @param {string} label - Group label
      * @param {*} message - Debug data
      */
@@ -126,8 +118,6 @@ class Logger {
 
     /**
      * Info — console only, dev mode only.
-     * For general information during development.
-     *
      * @param {*} message - Info message
      */
     static info(message) {
@@ -139,8 +129,6 @@ class Logger {
 
     /**
      * Warn — console always, no backend.
-     * For non-critical issues worth noticing.
-     *
      * @param {*} message - Warning message
      * @param {string} [context] - Component/method name
      */
@@ -151,11 +139,9 @@ class Logger {
 
     /**
      * Error — console + backend API (Tier 2).
-     * For caught errors that need tracking.
-     *
      * @param {*} input - Error object, string, or {message, error} shape
-     * @param {string} [context] - Component/method name (e.g. 'BuilderLiveEditor::handleSave')
-     * @param {Object} [meta] - Optional structured metadata (e.g. {campaignId: 123})
+     * @param {string} [context] - Component/method name
+     * @param {Object} [meta] - Optional structured metadata
      */
     static error(input, context = '', meta = null) {
         const msg = _extractMessage(input);
@@ -165,8 +151,6 @@ class Logger {
 
     /**
      * Fatal — console + backend API (Tier 2) + triggers Slack (Tier 3 server-side).
-     * For unrecoverable errors: render crashes, data loss risks, auth failures.
-     *
      * @param {*} input - Error object or string
      * @param {string} [context] - Component/method name
      * @param {Object} [meta] - Optional structured metadata
@@ -178,23 +162,21 @@ class Logger {
     }
 }
 
-/**
- * Global unhandled error + promise rejection → Logger.fatal
- * Catches errors that aren't wrapped in try/catch.
- */
-window.addEventListener('error', (event) => {
-    Logger.fatal(
-        event.error || event.message,
-        'window::unhandledError',
-        { filename: event.filename, lineno: event.lineno, colno: event.colno }
-    );
-});
+if (typeof window !== 'undefined') {
+    window.addEventListener('error', (event) => {
+        Logger.fatal(
+            event.error || event.message,
+            'window::unhandledError',
+            { filename: event.filename, lineno: event.lineno, colno: event.colno }
+        );
+    });
 
-window.addEventListener('unhandledrejection', (event) => {
-    Logger.fatal(
-        event.reason?.message || event.reason || 'Unhandled promise rejection',
-        'window::unhandledRejection'
-    );
-});
+    window.addEventListener('unhandledrejection', (event) => {
+        Logger.fatal(
+            event.reason?.message || event.reason || 'Unhandled promise rejection',
+            'window::unhandledRejection'
+        );
+    });
+}
 
 export default Logger;

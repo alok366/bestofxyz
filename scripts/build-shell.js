@@ -4,7 +4,7 @@ const manifest = JSON.parse(
   fs.readFileSync('public/dist/.vite/manifest.json', 'utf-8')
 )
 
-const entry = manifest['resources/js/User/App.jsx']
+const entry = manifest['resources/js/app/User/App.jsx']
 
 if (!entry) {
   throw new Error('Entry not found in manifest. Check the key matches your Vite input path.')
