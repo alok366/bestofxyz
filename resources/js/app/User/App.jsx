@@ -4,10 +4,11 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import UserRouter from './Router';
+import '@shared/styles/index.less';
 
 const spaRoot = document.getElementById('user-app');
 
 if (spaRoot) {
   const root = createRoot(spaRoot);
-  root.render(<UserRouter bootstrap={{}} />);
+  root.render(<UserRouter />);
 }

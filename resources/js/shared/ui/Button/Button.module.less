@@ -1,0 +1,31 @@
+.btn {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: border-color 0.18s ease, background 0.18s ease;
+
+  &:hover {
+    border-color: #4b5563;
+  }
+}
+
+.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #07131f;
+
+  &:hover {
+    background: #79c0ff;
+    border-color: #79c0ff;
+  }
+}

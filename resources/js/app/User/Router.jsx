@@ -12,6 +12,7 @@ import { Http } from '@shared/api';
 import { Layout } from '@widgets/layout';
 import { StatusMessage } from '@shared/ui';
 import { HomePage } from '@pages/home';
+import { StoreProvider } from './providers/StoreProvider';
 
 const NotFound = () => (
   <StatusMessage
@@ -29,19 +30,7 @@ const NotFound = () => (
  */
 const engineForPath = () => 'broadcasts';
 
-/**
- * Route → header title map.
- */
-const TITLES = [];
-
-const titleForPath = (path) => {
-  const match = TITLES.find(
-    ([prefix]) => path === prefix || path.startsWith(prefix + '/')
-  );
-  return match ? match[1] : '';
-};
-
-function RouterInner({ bootstrap }) {
+function RouterInner() {
   const location = useLocation();
   const [currentPath, setCurrentPath] = useState(location.pathname);
 
@@ -56,13 +45,7 @@ function RouterInner({ bootstrap }) {
   }, [location.pathname]);
 
   return (
-    <Layout
-      currentPath={currentPath}
-      pageTitle={titleForPath(currentPath)}
-      userName={bootstrap.userName || 'User'}
-      bootstrap={bootstrap}
-      urlEngine={engineForPath()}
-    >
+    <Layout currentPath={currentPath}>
       <Routes>
         <Route path="/dashboard" element={<HomePage />} />
         <Route path="*" element={<NotFound />} />
@@ -71,11 +54,13 @@ function RouterInner({ bootstrap }) {
   );
 }
 
-function UserRouter({ bootstrap = {} }) {
+function UserRouter() {
   return (
-    <BrowserRouter>
-      <RouterInner bootstrap={bootstrap} />
-    </BrowserRouter>
+    <StoreProvider>
+      <BrowserRouter>
+        <RouterInner />
+      </BrowserRouter>
+    </StoreProvider>
   );
 }
 
