@@ -10,6 +10,8 @@ import {
 } from 'react-router-dom';
 import { Http } from '@shared/api';
 import { Layout } from '@widgets/layout';
+import { Header } from '@widgets/header';
+import { Footer } from '@widgets/footer';
 import { StatusMessage } from '@shared/ui';
 import { HomePage } from '@pages/home';
 import { StoreProvider } from './providers/StoreProvider';
@@ -45,8 +47,9 @@ function RouterInner() {
   }, [location.pathname]);
 
   return (
-    <Layout currentPath={currentPath}>
+    <Layout currentPath={currentPath} header={<Header />} footer={<Footer />}>
       <Routes>
+        <Route path="/" element={<HomePage />} />
         <Route path="/dashboard" element={<HomePage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -1,0 +1,59 @@
+.card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.18s ease, transform 0.18s ease;
+
+    /* Gradient accent line at the top */
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent), #8b5cf6);
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+
+    &:hover {
+        border-color: #4b5563;
+        transform: translateY(-2px);
+
+        &::before {
+            opacity: 1;
+        }
+    }
+}
+
+.icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.name {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.desc {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.count {
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 12px;
+}

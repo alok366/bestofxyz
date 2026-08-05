@@ -1,0 +1,42 @@
+.discussion {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: border-color 0.18s ease;
+
+    &:hover {
+        border-color: #4b5563;
+    }
+}
+
+.top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+
+    strong {
+        font-size: 14px;
+    }
+}
+
+.time {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.body {
+    margin: 0 0 10px;
+    color: #d0d7de;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.meta {
+    display: flex;
+    gap: 14px;
+    color: var(--muted);
+    font-size: 13px;
+}

@@ -2,17 +2,17 @@
  * Layout — app shell widget used by SPA routes.
  *
  * Renders the site header, main content (`children`, i.e. routed page), and footer.
+ * Header and footer are injected via props to avoid sideways imports between
+ * sibling widget slices — the app layer handles the composition.
  */
 import React from 'react';
-import { Header } from '@widgets/header';
-import { Footer } from '@widgets/footer';
 
-function Layout({ children, currentPath }) {
+function Layout({ header, footer, children, currentPath }) {
   return (
     <div className="app-shell" data-path={currentPath}>
-      <Header />
+      {header}
       <main className="app-content">{children}</main>
-      <Footer />
+      {footer}
     </div>
   );
 }

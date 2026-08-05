@@ -4,49 +4,67 @@ import globals from "globals";
 // Feature-Sliced Design (FSD) Layer order (index = level, lower cannot import higher)
 const FSD_LAYERS = ['shared', 'entities', 'features', 'widgets', 'pages', 'app'];
 
+// Layers where cross-slice (sideways) imports should be blocked.
+// 'shared' is excluded — its internal folders (ui/, api/, lib/, config/) are meant to reference each other.
+const SLICE_ENFORCED_LAYERS = ['entities', 'features', 'widgets', 'pages'];
+
 const fsdPlugin = {
   meta: { name: 'eslint-plugin-fsd' },
   rules: {
     'fsd-layer-imports': {
       meta: {
         type: 'problem',
-        docs: { description: 'Enforce Feature-Sliced Design layer boundaries (app -> pages -> widgets -> features -> entities -> shared)' },
+        docs: { description: 'Enforce Feature-Sliced Design layer boundaries and slice isolation' },
         schema: [],
       },
       create(context) {
         const filename = (context.filename || context.getFilename() || '').replace(/\\/g, '/');
 
-        const getLayer = (pathStr) => {
-          const match = pathStr.match(/resources\/js\/(app|pages|widgets|features|entities|shared)\//);
-          if (match) return match[1];
-          if (pathStr.startsWith('@app')) return 'app';
-          if (pathStr.startsWith('@pages')) return 'pages';
-          if (pathStr.startsWith('@widgets')) return 'widgets';
-          if (pathStr.startsWith('@features')) return 'features';
-          if (pathStr.startsWith('@entities')) return 'entities';
-          if (pathStr.startsWith('@shared')) return 'shared';
-          return null;
+        const getLayerAndSlice = (pathStr) => {
+          // Matches resources/js/<layer>/<slice>/...
+          const fsMatch = pathStr.match(/resources\/js\/(app|pages|widgets|features|entities|shared)\/([^/]+)/);
+          if (fsMatch) return { layer: fsMatch[1], slice: fsMatch[2] };
+
+          // Matches alias form @widgets/<slice>/...
+          const aliasMatch = pathStr.match(/^@(app|pages|widgets|features|entities|shared)\/([^/]+)/);
+          if (aliasMatch) return { layer: aliasMatch[1], slice: aliasMatch[2] };
+
+          return { layer: null, slice: null };
         };
 
-        const currentLayer = getLayer(filename);
-        if (!currentLayer) return {};
+        const current = getLayerAndSlice(filename);
+        if (!current.layer) return {};
 
-        const currentLayerIndex = FSD_LAYERS.indexOf(currentLayer);
+        const currentLayerIndex = FSD_LAYERS.indexOf(current.layer);
 
         return {
           ImportDeclaration(node) {
             const source = node.source.value;
-            const targetLayer = getLayer(source);
+            const target = getLayerAndSlice(source);
+            if (!target.layer) return;
 
-            if (!targetLayer) return;
+            const targetLayerIndex = FSD_LAYERS.indexOf(target.layer);
 
-            const targetLayerIndex = FSD_LAYERS.indexOf(targetLayer);
-
-            // Cannot import upward or sideways from higher layer
+            // Rule 1: cannot import upward
             if (targetLayerIndex > currentLayerIndex) {
               context.report({
                 node,
-                message: `FSD Layer Violation: Layer '${currentLayer}' cannot import from higher layer '${targetLayer}'. Layer hierarchy is: app -> pages -> widgets -> features -> entities -> shared.`,
+                message: `FSD Layer Violation: Layer '${current.layer}' cannot import from higher layer '${target.layer}'. Layer hierarchy is: app -> pages -> widgets -> features -> entities -> shared.`,
+              });
+              return;
+            }
+
+            // Rule 2: cannot import sideways — same layer, different slice
+            if (
+              targetLayerIndex === currentLayerIndex &&
+              SLICE_ENFORCED_LAYERS.includes(current.layer) &&
+              target.slice &&
+              current.slice &&
+              target.slice !== current.slice
+            ) {
+              context.report({
+                node,
+                message: `FSD Sideways Import Violation: '${current.layer}/${current.slice}' cannot import directly from sibling slice '${current.layer}/${target.slice}'. Same-layer slices must not import each other — compose them from a higher layer (e.g. a page or app) instead.`,
               });
             }
           },

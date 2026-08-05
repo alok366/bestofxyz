@@ -1,5 +1,4 @@
-import { Logo } from '@shared/ui/Logo';
-import { Button } from '@shared/ui/Button';
+import { Logo, Button } from '@shared/ui';
 import { CategoryFilter } from '@features/filter-by-category';
 import styles from './Header.module.less';
 

@@ -1,0 +1,41 @@
+/* ── Shared Card — composable glass-panel wrapper ─────────── */
+
+.card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    transition: transform 0.18s ease, border-color 0.18s ease;
+
+    &:hover {
+        border-color: #4b5563;
+    }
+}
+
+/* Optional lift-on-hover modifier */
+.lift:hover {
+    transform: translateY(-2px);
+}
+
+/* ── Sub-component slots ─────────────────────────────────── */
+
+.header {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.body {
+    /* Flexible container for main content */
+}
+
+.footer {
+    margin-top: 12px;
+}
+
+.image {
+    width: 100%;
+    border-radius: var(--radius);
+    object-fit: cover;
+}
