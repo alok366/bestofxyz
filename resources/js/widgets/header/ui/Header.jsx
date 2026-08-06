@@ -1,5 +1,6 @@
 import { Logo, Button } from '@shared/ui';
 import { CategoryFilter } from '@features/filter-by-category';
+import { UserDropdown } from '@features/user-dropdown';
 import styles from './Header.module.less';
 
 export const Header = () => (
@@ -21,7 +22,7 @@ export const Header = () => (
         <a href="#">Discussions</a>
       </nav>
 
-      <Button>Log in</Button>
+      <UserDropdown initials="U" />
       <Button variant="primary">Submit Resource</Button>
     </div>
 
