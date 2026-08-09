@@ -14,6 +14,7 @@ import { Header } from '@widgets/header';
 import { Footer } from '@widgets/footer';
 import { StatusMessage } from '@shared/ui';
 import { HomePage } from '@pages/home';
+import { AllCategoriesPage } from '@pages/allcategories';
 import { StoreProvider } from './providers/StoreProvider';
 
 const NotFound = () => (
@@ -51,6 +52,7 @@ function RouterInner() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/dashboard" element={<HomePage />} />
+        <Route path="/categories" element={<AllCategoriesPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>

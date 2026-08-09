@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Logo, Button } from '@shared/ui';
 import { CategoryFilter } from '@features/filter-by-category';
 import { UserDropdown } from '@features/user-dropdown';
@@ -6,10 +7,10 @@ import styles from './Header.module.less';
 export const Header = () => (
   <header className={styles.nav}>
     <div className={`${styles.container} ${styles['nav-inner']}`}>
-      <a className={styles.brand} href="#">
+      <Link className={styles.brand} to="/">
         <Logo />
         <div>BestFor.dev</div>
-      </a>
+      </Link>
 
       <div className={styles.search}>
         <span aria-hidden="true">🔎</span>
@@ -17,7 +18,7 @@ export const Header = () => (
       </div>
 
       <nav className={styles['nav-links']}>
-        <a href="#">Browse</a>
+        <Link to="/categories">Categories</Link>
         <a href="#">Topics</a>
         <a href="#">Discussions</a>
       </nav>
