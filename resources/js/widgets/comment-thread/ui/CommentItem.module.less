@@ -1,0 +1,136 @@
+.commentWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.isReply {
+    margin-left: 36px;
+    padding-left: 16px;
+    border-left: 2px solid var(--border);
+}
+
+.comment {
+    display: flex;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: border-color 0.18s ease;
+
+    &:hover {
+        border-color: #4b5563;
+    }
+}
+
+.voteControl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2px;
+    min-width: 28px;
+    flex-shrink: 0;
+}
+
+.voteBtn {
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: color 0.15s ease, transform 0.15s ease;
+
+    &:hover {
+        color: var(--text);
+    }
+}
+
+.votedUp {
+    color: var(--accent-2);
+}
+
+.votedDown {
+    color: var(--danger);
+}
+
+.voteScore {
+    font-size: 13px;
+    font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: var(--text);
+    line-height: 1.2;
+}
+
+.negativeScore {
+    color: var(--danger);
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.author {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.time {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.body {
+    margin: 0 0 10px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.actionBtn {
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    transition: color 0.15s ease;
+
+    &:hover {
+        color: var(--accent);
+    }
+}
+
+.repliesList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+@media (max-width: 560px) {
+    .isReply {
+        margin-left: 16px;
+        padding-left: 10px;
+    }
+}

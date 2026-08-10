@@ -1,0 +1,62 @@
+.thread {
+    display: flex;
+    flex-direction: column;
+}
+
+.headerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin: 0;
+    color: var(--text);
+}
+
+.sortTabs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sortTab {
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+
+    &:hover {
+        border-color: #4b5563;
+        color: var(--text);
+    }
+}
+
+.activeSort {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #07131f;
+
+    &:hover {
+        background: #79c0ff;
+        border-color: #79c0ff;
+        color: #07131f;
+    }
+}
+
+.commentList {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}

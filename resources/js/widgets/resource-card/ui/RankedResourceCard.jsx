@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from '@shared/ui';
 import { VoteControl } from './VoteControl';
 import styles from './RankedResourceCard.module.less';
@@ -35,6 +36,36 @@ export const RankedResourceCard = ({
 }) => {
     const rankClass = rank === 1 ? styles.rank1 : rank === 2 ? styles.rank2 : rank === 3 ? styles.rank3 : '';
     const deltaClass = delta.type === 'up' ? styles.deltaUp : delta.type === 'down' ? styles.deltaDown : styles.deltaFlat;
+    const isInternalLink = href && href.startsWith('/');
+
+    const renderTitleLink = () => (
+        isInternalLink ? (
+            <Link to={href} className={styles.title}>
+                {title}
+            </Link>
+        ) : (
+            <a href={href} className={styles.title}>
+                {title}
+            </a>
+        )
+    );
+
+    const renderCommentsLink = () => {
+        const text = commentsCount === 0
+            ? 'no comments yet'
+            : `${commentsCount} comment${commentsCount === 1 ? '' : 's'}`;
+        const className = `${styles.comments} ${commentsCount === 0 ? styles.faint : ''}`;
+
+        return isInternalLink ? (
+            <Link to={href} className={className}>
+                {text}
+            </Link>
+        ) : (
+            <a href={href} className={className}>
+                {text}
+            </a>
+        );
+    };
 
     return (
         <Card as="article" lift className={styles.card}>
@@ -49,9 +80,7 @@ export const RankedResourceCard = ({
 
             <div className={styles.main}>
                 <div className={styles.titleRow}>
-                    <a href={href} className={styles.title}>
-                        {title}
-                    </a>
+                    {renderTitleLink()}
                     {host && <span className={styles.host}>{host}</span>}
                 </div>
 
@@ -74,14 +103,7 @@ export const RankedResourceCard = ({
                             <span className={styles.submitterName}>{submitter}</span>
                         </span>
                     )}
-                    <a
-                        href={href}
-                        className={`${styles.comments} ${commentsCount === 0 ? styles.faint : ''}`}
-                    >
-                        {commentsCount === 0
-                            ? 'no comments yet'
-                            : `${commentsCount} comment${commentsCount === 1 ? '' : 's'}`}
-                    </a>
+                    {renderCommentsLink()}
                 </div>
             </div>
         </Card>

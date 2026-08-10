@@ -30,7 +30,7 @@ export const MOCK_CATEGORY_DETAIL = {
             tags: ['free', 'official', 'book'],
             submitter: 'kdev',
             commentsCount: 38,
-            href: '#',
+            href: '/resource/rust-book',
         },
         {
             id: 'sicp',
@@ -44,7 +44,7 @@ export const MOCK_CATEGORY_DETAIL = {
             tags: ['free', 'book', 'course'],
             submitter: 'alank',
             commentsCount: 42,
-            href: '#',
+            href: '/resource/sicp',
         },
         {
             id: 'crafting-interpreters',
@@ -58,7 +58,7 @@ export const MOCK_CATEGORY_DETAIL = {
             tags: ['free', 'book'],
             submitter: 'munin',
             commentsCount: 29,
-            href: '#',
+            href: '/resource/crafting-interpreters',
         },
         {
             id: 'vscode',
@@ -72,7 +72,7 @@ export const MOCK_CATEGORY_DETAIL = {
             tags: ['free', 'official', 'tool'],
             submitter: 'sarah_m',
             commentsCount: 54,
-            href: '#',
+            href: '/resource/vscode',
         },
         {
             id: 'fullstack-open',
@@ -86,7 +86,7 @@ export const MOCK_CATEGORY_DETAIL = {
             tags: ['free', 'course', 'interactive'],
             submitter: 'helsinki_dev',
             commentsCount: 31,
-            href: '#',
+            href: '/resource/fullstack-open',
         },
         {
             id: 'exercism',
@@ -101,7 +101,7 @@ export const MOCK_CATEGORY_DETAIL = {
             submitter: 'i_love_code',
             submitterTime: '1 day ago',
             commentsCount: 19,
-            href: '#',
+            href: '/resource/exercism',
         },
     ],
 };
