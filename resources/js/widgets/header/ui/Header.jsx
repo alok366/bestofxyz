@@ -24,7 +24,9 @@ export const Header = () => (
       </nav>
 
       <UserDropdown initials="U" />
-      <Button variant="primary">Submit Resource</Button>
+      <Link to="/submit">
+        <Button variant="primary">Submit Resource</Button>
+      </Link>
     </div>
 
     <div className={styles.container}>

@@ -17,6 +17,7 @@ import { HomePage } from '@pages/home';
 import { AllCategoriesPage } from '@pages/allcategories';
 import { CategoryPage } from '@pages/category';
 import { ResourceDetailPage } from '@pages/resource';
+import { SubmitResourcePage } from '@pages/submit';
 import { StoreProvider } from './providers/StoreProvider';
 
 const NotFound = () => (
@@ -59,6 +60,7 @@ function RouterInner() {
         <Route path="/category" element={<CategoryPage />} />
         <Route path="/resource/:id" element={<ResourceDetailPage />} />
         <Route path="/resource" element={<ResourceDetailPage />} />
+        <Route path="/submit" element={<SubmitResourcePage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>
