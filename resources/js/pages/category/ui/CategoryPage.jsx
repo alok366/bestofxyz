@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@shared/ui';
-import { SubcategoryList } from '@widgets/subcategory-list';
+import { RankedResourceCard } from '@widgets/resource-card';
 import { MOCK_CATEGORY_DETAIL } from '../model/mockData';
 import styles from './CategoryPage.module.less';
 
 /**
- * CategoryPage — renders category detail view with breadcrumb, description,
- * community stats, and community-ranked subcategories.
+ * CategoryPage — renders category direct ranking view with breadcrumb,
+ * description, sort/tag filters, and community-ranked resource cards.
  */
 export const CategoryPage = () => {
     const category = MOCK_CATEGORY_DETAIL;
+    const [selectedSort, setSelectedSort] = useState(category.sortOptions[0] || 'Top');
+    const [selectedTag, setSelectedTag] = useState(null);
+
+    const filteredResources = category.resources.filter((res) => {
+        if (!selectedTag) return true;
+        return res.tags.includes(selectedTag);
+    });
 
     return (
         <div className={styles.page}>
@@ -37,14 +43,42 @@ export const CategoryPage = () => {
                 </header>
 
                 <section className={styles.section}>
-                    <div className={styles.sectionHeader}>
-                        <h2 className={styles.sectionTitle}>Subcategories</h2>
-                        <Button variant="default" className={styles.proposeBtn}>
-                            + Propose a subcategory
-                        </Button>
+                    <div className={styles.filterBar}>
+                        <div className={styles.sortGroup}>
+                            {category.sortOptions.map((sort) => (
+                                <button
+                                    key={sort}
+                                    type="button"
+                                    className={`${styles.sortChip} ${selectedSort === sort ? styles.activeSort : ''}`}
+                                    onClick={() => setSelectedSort(sort)}
+                                >
+                                    {sort}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className={styles.tagGroup}>
+                            {category.filterTags.map((tag) => {
+                                const isTagActive = selectedTag === tag;
+                                return (
+                                    <button
+                                        key={tag}
+                                        type="button"
+                                        className={`${styles.filterTag} ${isTagActive ? styles.activeTag : ''}`}
+                                        onClick={() => setSelectedTag(isTagActive ? null : tag)}
+                                    >
+                                        {tag}
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
 
-                    <SubcategoryList items={category.subcategories} />
+                    <div className={styles.resourceList}>
+                        {filteredResources.map((res) => (
+                            <RankedResourceCard key={res.id || res.title} {...res} />
+                        ))}
+                    </div>
                 </section>
 
                 <footer className={styles.backNav}>

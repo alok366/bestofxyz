@@ -37,7 +37,7 @@
 }
 
 .pageHead {
-    margin-bottom: 36px;
+    margin-bottom: 28px;
 }
 
 .breadcrumb {
@@ -98,24 +98,86 @@
     margin-bottom: 48px;
 }
 
-.sectionHeader {
+.filterBar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    margin-bottom: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
 }
 
-.sectionTitle {
-    font-size: 1.25rem;
-    font-weight: 800;
-    margin: 0;
-    color: var(--text);
+.sortGroup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.proposeBtn {
+.sortChip {
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--muted);
     font-size: 13px;
-    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+
+    &:hover {
+        border-color: #4b5563;
+        color: var(--text);
+    }
+}
+
+.activeSort {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #07131f;
+
+    &:hover {
+        background: #79c0ff;
+        border-color: #79c0ff;
+        color: #07131f;
+    }
+}
+
+.tagGroup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.filterTag {
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+
+    &:hover {
+        border-color: #4b5563;
+        color: var(--text);
+    }
+}
+
+.activeTag {
+    background: rgba(88, 166, 255, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.resourceList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .backNav {
@@ -132,13 +194,5 @@
 
     &:hover {
         color: var(--accent);
-    }
-}
-
-@media (max-width: 560px) {
-    .sectionHeader {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
     }
 }
