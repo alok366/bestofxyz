@@ -83,6 +83,22 @@
     min-width: 0;
 }
 
+.subLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    flex-shrink: 1;
+    min-width: 0;
+    transition: color 0.18s ease;
+
+    &:hover {
+        color: var(--accent);
+    }
+}
+
 .subMeta {
     font-size: 13px;
     color: var(--muted);

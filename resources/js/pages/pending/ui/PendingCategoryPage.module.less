@@ -1,0 +1,221 @@
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page {
+    padding: 32px 0 64px;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 700px;
+        height: 300px;
+        background: radial-gradient(ellipse, rgba(88, 166, 255, 0.08) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+}
+
+.container {
+    width: min(1200px, calc(100% - 32px));
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.5s ease both;
+}
+
+.pageHead {
+    margin-bottom: 32px;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.crumbLink {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.18s ease;
+
+    &:hover {
+        color: var(--accent);
+    }
+}
+
+.separator {
+    color: var(--muted);
+    opacity: 0.6;
+}
+
+.current {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.statusBadge {
+    margin-bottom: 12px;
+}
+
+.title {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -1px;
+    margin: 0 0 16px;
+    color: var(--text);
+}
+
+.description {
+    font-size: 1.08rem;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 760px;
+    margin: 0;
+}
+
+.thresholdSection {
+    margin-bottom: 40px;
+}
+
+.thresholdCard {
+    max-width: 640px;
+    padding: 24px 28px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.progressHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.progressTitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.progressSubtext {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+.progressPercent {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: var(--accent);
+}
+
+.progressBar {
+    width: 100%;
+    height: 8px;
+    background: var(--panel-2);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+}
+
+.progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #8b5cf6);
+    border-radius: var(--radius-full);
+    transition: width 0.4s ease;
+}
+
+.explanation {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0 0 20px;
+}
+
+.ctaLink {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.ctaButton {
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.resourcesSection {
+    margin-bottom: 48px;
+}
+
+.sectionTitle {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin: 0 0 18px;
+    color: var(--text);
+}
+
+.resourceList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.addDashedCard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 24px;
+    background: var(--panel);
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+
+    &:hover {
+        border-color: var(--accent);
+        color: var(--text);
+        transform: translateY(-1px);
+    }
+}
+
+.backNav {
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.backLink {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.18s ease;
+
+    &:hover {
+        color: var(--accent);
+    }
+}

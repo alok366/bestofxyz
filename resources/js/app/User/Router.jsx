@@ -18,6 +18,7 @@ import { AllCategoriesPage } from '@pages/allcategories';
 import { CategoryPage } from '@pages/category';
 import { ResourceDetailPage } from '@pages/resource';
 import { SubmitResourcePage } from '@pages/submit';
+import { PendingCategoryPage } from '@pages/pending';
 import { StoreProvider } from './providers/StoreProvider';
 
 const NotFound = () => (
@@ -61,6 +62,8 @@ function RouterInner() {
         <Route path="/resource/:id" element={<ResourceDetailPage />} />
         <Route path="/resource" element={<ResourceDetailPage />} />
         <Route path="/submit" element={<SubmitResourcePage />} />
+        <Route path="/pending/:slug" element={<PendingCategoryPage />} />
+        <Route path="/pending" element={<PendingCategoryPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>
