@@ -19,6 +19,7 @@ import { CategoryPage } from '@pages/category';
 import { ResourceDetailPage } from '@pages/resource';
 import { SubmitResourcePage } from '@pages/submit';
 import { PendingCategoryPage } from '@pages/pending';
+import { ThemeSync } from '@shared/lib/theme';
 import { StoreProvider } from './providers/StoreProvider';
 
 const NotFound = () => (
@@ -73,6 +74,7 @@ function RouterInner() {
 function UserRouter() {
   return (
     <StoreProvider>
+      <ThemeSync />
       <BrowserRouter>
         <RouterInner />
       </BrowserRouter>

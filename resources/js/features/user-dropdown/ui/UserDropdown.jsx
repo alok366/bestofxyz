@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Avatar } from '@shared/ui';
+import { useTheme, THEME_PREFERENCES } from '@shared/lib/theme';
 import styles from './UserDropdown.module.less';
 
 export const UserDropdown = ({ initials = 'U' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
-  const [selectedTheme, setSelectedTheme] = useState('light');
+  const { preference: selectedTheme, setTheme } = useTheme();
 
   const containerRef = useRef(null);
   const triggerRef = useRef(null);
@@ -49,8 +50,7 @@ export const UserDropdown = ({ initials = 'U' }) => {
   };
 
   const handleThemeSelect = (theme) => {
-    // UI only - isolated theme selection state placeholder
-    setSelectedTheme(theme);
+    setTheme(theme);
   };
 
   return (
@@ -101,12 +101,7 @@ export const UserDropdown = ({ initials = 'U' }) => {
             </a>
           </li>
 
-          <li
-            className={styles.menuItem}
-            role="none"
-            onMouseEnter={() => setIsSubmenuOpen(true)}
-            onMouseLeave={() => setIsSubmenuOpen(false)}
-          >
+          <li className={styles.menuItem} role="none">
             <button
               ref={themeItemRef}
               type="button"
@@ -133,13 +128,13 @@ export const UserDropdown = ({ initials = 'U' }) => {
                     type="button"
                     className={styles.menuItemButton}
                     role="menuitemradio"
-                    aria-checked={selectedTheme === 'light'}
-                    onClick={() => handleThemeSelect('light')}
+                    aria-checked={selectedTheme === THEME_PREFERENCES.LIGHT}
+                    onClick={() => handleThemeSelect(THEME_PREFERENCES.LIGHT)}
                   >
                     <span className={styles.itemLabel}>
                       <span
                         className={`${styles.radioIndicator} ${
-                          selectedTheme === 'light' ? styles.selected : ''
+                          selectedTheme === THEME_PREFERENCES.LIGHT ? styles.selected : ''
                         }`}
                         aria-hidden="true"
                       />
@@ -153,13 +148,13 @@ export const UserDropdown = ({ initials = 'U' }) => {
                     type="button"
                     className={styles.menuItemButton}
                     role="menuitemradio"
-                    aria-checked={selectedTheme === 'dark'}
-                    onClick={() => handleThemeSelect('dark')}
+                    aria-checked={selectedTheme === THEME_PREFERENCES.DARK}
+                    onClick={() => handleThemeSelect(THEME_PREFERENCES.DARK)}
                   >
                     <span className={styles.itemLabel}>
                       <span
                         className={`${styles.radioIndicator} ${
-                          selectedTheme === 'dark' ? styles.selected : ''
+                          selectedTheme === THEME_PREFERENCES.DARK ? styles.selected : ''
                         }`}
                         aria-hidden="true"
                       />
@@ -173,13 +168,13 @@ export const UserDropdown = ({ initials = 'U' }) => {
                     type="button"
                     className={styles.menuItemButton}
                     role="menuitemradio"
-                    aria-checked={selectedTheme === 'system'}
-                    onClick={() => handleThemeSelect('system')}
+                    aria-checked={selectedTheme === THEME_PREFERENCES.SYSTEM}
+                    onClick={() => handleThemeSelect(THEME_PREFERENCES.SYSTEM)}
                   >
                     <span className={styles.itemLabel}>
                       <span
                         className={`${styles.radioIndicator} ${
-                          selectedTheme === 'system' ? styles.selected : ''
+                          selectedTheme === THEME_PREFERENCES.SYSTEM ? styles.selected : ''
                         }`}
                         aria-hidden="true"
                       />

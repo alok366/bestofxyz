@@ -97,12 +97,17 @@
 .chevronIcon {
   font-size: 11px;
   color: var(--muted);
-  transition: color var(--transition-fast);
+  transition: color var(--transition-fast), transform var(--transition-fast);
+  display: inline-block;
 
   .menuItemButton:hover &,
   .menuItemButton:focus-visible &,
   .menuItemButton.active & {
     color: var(--accent);
+  }
+
+  .menuItemButton.active & {
+    transform: rotate(90deg);
   }
 }
 

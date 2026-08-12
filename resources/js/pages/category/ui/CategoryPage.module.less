@@ -126,7 +126,7 @@
     transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 
     &:hover {
-        border-color: #4b5563;
+        border-color: var(--border-hover);
         color: var(--text);
     }
 }
@@ -134,12 +134,12 @@
 .activeSort {
     background: var(--accent);
     border-color: var(--accent);
-    color: #07131f;
+    color: var(--on-accent);
 
     &:hover {
-        background: #79c0ff;
-        border-color: #79c0ff;
-        color: #07131f;
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
+        color: var(--on-accent);
     }
 }
 
@@ -163,7 +163,7 @@
     transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 
     &:hover {
-        border-color: #4b5563;
+        border-color: var(--border-hover);
         color: var(--text);
     }
 }

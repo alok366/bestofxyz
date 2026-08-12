@@ -11,7 +11,7 @@
   padding: 8px 12px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: rgba(31, 38, 48, 0.7);
+  background: var(--panel-2);
   color: var(--muted);
   font-size: 14px;
   cursor: pointer;
@@ -23,7 +23,7 @@
   transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
 
   &:hover {
-    border-color: #4b5563;
+    border-color: var(--border-hover);
     color: var(--text);
   }
 }
@@ -31,12 +31,12 @@
 .chipActive {
   background: var(--accent);
   border-color: var(--accent);
-  color: #07131f;
+  color: var(--on-accent);
   font-weight: 600;
 
   &:hover {
-    background: #79c0ff;
-    border-color: #79c0ff;
-    color: #07131f;
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: var(--on-accent);
   }
 }

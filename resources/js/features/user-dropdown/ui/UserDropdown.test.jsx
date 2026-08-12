@@ -1,8 +1,114 @@
-import { describe, it, expect } from 'vitest';
+import React, { act } from 'react';
+import { createRoot } from 'react-dom/client';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { THEME_PREFERENCES } from '@shared/config/theme';
+import { themeReducer, themeListenerMiddleware } from '@shared/lib/theme';
 import { UserDropdown } from './UserDropdown';
 
 describe('UserDropdown Component', () => {
+  let container;
+  let root;
+  let store;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    store = configureStore({
+      reducer: {
+        theme: themeReducer,
+      },
+      middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().prepend(themeListenerMiddleware.middleware),
+    });
+  });
+
+  afterEach(() => {
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+  });
+
   it('exports UserDropdown component function', () => {
     expect(typeof UserDropdown).toBe('function');
+  });
+
+  it('renders trigger button with avatar initials', () => {
+    act(() => {
+      root.render(
+        <Provider store={store}>
+          <UserDropdown initials="AB" />
+        </Provider>
+      );
+    });
+
+    const button = container.querySelector('button[aria-label="User menu"]');
+    expect(button).not.toBeNull();
+    expect(button.textContent).toContain('AB');
+  });
+
+  it('toggles theme submenu on click and selects a theme option', () => {
+    act(() => {
+      root.render(
+        <Provider store={store}>
+          <UserDropdown initials="U" />
+        </Provider>
+      );
+    });
+
+    const triggerBtn = container.querySelector('button[aria-label="User menu"]');
+
+    // Click to open main menu
+    act(() => {
+      triggerBtn.click();
+    });
+
+    // Theme menu item exists
+    const themeBtn = Array.from(container.querySelectorAll('button')).find(
+      (b) => b.textContent.includes('Theme')
+    );
+    expect(themeBtn).toBeDefined();
+    expect(themeBtn.getAttribute('aria-expanded')).toBe('false');
+
+    // Submenu is not open initially
+    expect(container.querySelectorAll('button[role="menuitemradio"]').length).toBe(0);
+
+    // 1st Click on Theme: opens submenu
+    act(() => {
+      themeBtn.click();
+    });
+    expect(themeBtn.getAttribute('aria-expanded')).toBe('true');
+    expect(container.querySelectorAll('button[role="menuitemradio"]').length).toBe(3);
+
+    // 2nd Click on Theme: closes submenu
+    act(() => {
+      themeBtn.click();
+    });
+    expect(themeBtn.getAttribute('aria-expanded')).toBe('false');
+    expect(container.querySelectorAll('button[role="menuitemradio"]').length).toBe(0);
+
+    // 3rd Click on Theme: re-opens submenu
+    act(() => {
+      themeBtn.click();
+    });
+    expect(themeBtn.getAttribute('aria-expanded')).toBe('true');
+
+    // Find all theme radio buttons
+    const radioButtons = container.querySelectorAll('button[role="menuitemradio"]');
+    expect(radioButtons.length).toBe(3);
+
+    // Select dark theme
+    const darkRadio = Array.from(radioButtons).find((b) => b.textContent.includes('Dark'));
+    act(() => {
+      darkRadio.click();
+    });
+
+    // Verify Redux state updated to dark
+    expect(store.getState().theme.preference).toBe(THEME_PREFERENCES.DARK);
+    expect(darkRadio.getAttribute('aria-checked')).toBe('true');
   });
 });
