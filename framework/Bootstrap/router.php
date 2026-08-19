@@ -7,6 +7,7 @@ use Framework\Http\Middleware\ApiMiddleware;
 use Framework\Http\Middleware\StartSessionMiddleware;
 use Framework\Http\Middleware\LoginThrottleMiddleware;
 use Framework\Http\Middleware\JwtAuthMiddleware;
+use Framework\Http\Middleware\VoteRateLimitMiddleware;
 
 global $container, $events;
 
@@ -24,4 +25,6 @@ $router->aliasMiddleware('developer.api', ApiMiddleware::class);
 $router->aliasMiddleware('start.session', StartSessionMiddleware::class);
 $router->aliasMiddleware('auth.throttle', LoginThrottleMiddleware::class);
 $router->aliasMiddleware('auth.jwt', JwtAuthMiddleware::class);
+$router->aliasMiddleware('vote.rate', VoteRateLimitMiddleware::class);
 return $router;
+

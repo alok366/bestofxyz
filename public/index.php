@@ -8,6 +8,7 @@ require_once __DIR__ . '/../routes/web/index.php';
 
 try {
     $request = Illuminate\Http\Request::capture();
+    $container->instance('request', $request);
     $response = $router->dispatch($request);
 
     if ($response) {

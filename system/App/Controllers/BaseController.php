@@ -25,9 +25,6 @@ abstract class BaseController
         global $container;
         global $capsule;
 
-        if (!self::$request) :
-            self::$request = Request::capture();
-        endif;
         $this->response = new ResponseService();
         $this->auth = $container->make('auth');
 
@@ -35,11 +32,22 @@ abstract class BaseController
         $loader = new ArrayLoader();
         $translator = new Translator($loader, 'en');
         $this->validator = new ValidatorFactory($translator);
-        $this->validator->setPresenceVerifier(new DatabasePresenceVerifier($capsule->getDatabaseManager()));
+        if ($capsule) :
+            $this->validator->setPresenceVerifier(new DatabasePresenceVerifier($capsule->getDatabaseManager()));
+        endif;
     }
 
-    protected function request()
+    protected function request(): Request
     {
+        global $container;
+        if ($container && $container->bound('request')) :
+            return $container->make('request');
+        endif;
+
+        if (!self::$request) :
+            self::$request = Request::capture();
+        endif;
+
         return self::$request;
     }
 

@@ -11,7 +11,8 @@
         "illuminate/events": "^11.0",
         "illuminate/container": "^11.0",
         "illuminate/validation": "^11.0",
-        "illuminate/translation": "^11.0"
+        "illuminate/translation": "^11.0",
+        "firebase/php-jwt": "^7.1"
     },
     "require-dev": {
         "tracy/tracy": "^2.10"

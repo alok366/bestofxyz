@@ -8,6 +8,8 @@
 | without pulling in session, globals, or legacy web-app globals.
 */
 
+global $capsule;
+
 try {
     $capsule = new \Illuminate\Database\Capsule\Manager;
     $capsule->addConnection([
