@@ -85,6 +85,9 @@ class ResourceService extends BaseService
                 if (!$subcategory) :
                     throw new NotFoundException('Subcategory not found.');
                 endif;
+                if (!in_array($subcategory->status, ['live', 'pending'], true)) :
+                    throw new NotFoundException('This subcategory is not accepting submissions.');
+                endif;
             elseif ($newSubcategoryName) :
                 if (!$categoryId) :
                     throw new NotFoundException('Parent category_id is required to create a subcategory.');

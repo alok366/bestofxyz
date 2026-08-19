@@ -35,7 +35,8 @@ class CategoryTransformer
                     'topResource'  => $top ? $top->title : null,
                     'score'        => $top ? (int) $top->score : 0,
                     'badge'        => $isPending ? 'new' : null,
-                    'status'       => $isPending ? "{$count}/{$subcat->resource_threshold} resources" : 'live',
+                    'status'       => $isPending ? 'pending' : 'live',
+                    'progress'     => $isPending ? "{$count}/{$subcat->resource_threshold} resources" : null,
                     'href'         => $isPending ? "/pending/{$subcat->slug}" : "/categories/{$subcat->slug}",
                 ];
 
@@ -48,7 +49,6 @@ class CategoryTransformer
                 'subcategoriesCount' => count($subcategoriesData),
                 'resourcesCount'     => $totalResources,
                 'href'               => "/categories/{$category->slug}",
-                'subcategories'      => $subcategoriesData,
                 'categories'         => $subcategoriesData,
             ];
         endforeach;
