@@ -48,6 +48,11 @@ class ResourceService extends BaseService
         return $this->getResourcesForCategory($subcategoryId, $sort, $tag);
     }
 
+    public function findBySlug(string $slug): ?Resource
+    {
+        return $this->resourceRepo->findBySlug($slug);
+    }
+
     public function findByCategoryAndSlug(int $categoryId, string $slug): ?Resource
     {
         return $this->resourceRepo->findByCategoryAndSlug($categoryId, $slug);

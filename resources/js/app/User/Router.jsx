@@ -60,6 +60,8 @@ function RouterInner() {
         <Route path="/categories" element={<AllCategoriesPage />} />
         <Route path="/categories/:slug" element={<CategoryPage />} />
         <Route path="/categories/:catSlug/resources/:resSlug" element={<ResourceDetailPage />} />
+        <Route path="/resource/:slug" element={<ResourceDetailPage />} />
+        <Route path="/resources/:slug" element={<ResourceDetailPage />} />
         <Route path="/submit" element={<SubmitResourcePage />} />
         <Route path="/pending/:slug" element={<PendingCategoryPage />} />
         <Route path="*" element={<NotFound />} />

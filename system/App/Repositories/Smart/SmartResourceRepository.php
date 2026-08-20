@@ -14,6 +14,11 @@ class SmartResourceRepository extends BaseSmartRepository
         $this->eloquent = $eloquent ?? new EloquentResourceRepository();
     }
 
+    public function findBySlug(string $slug): ?Resource
+    {
+        return $this->eloquent->findBySlug($slug);
+    }
+
     public function findByCategoryAndSlug(int $categoryId, string $slug): ?Resource
     {
         return $this->eloquent->findByCategoryAndSlug($categoryId, $slug);

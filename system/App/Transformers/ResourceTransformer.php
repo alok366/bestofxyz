@@ -58,7 +58,7 @@ class ResourceTransformer
             'submitter'     => $resource->submitter->username ?? 'community',
             'submitterTime' => $resource->created_at ? $resource->created_at->diffForHumans() : '',
             'commentsCount' => (int) ($resource->comments_count ?? ($resource->comments ? $resource->comments->count() : 0)),
-            'href'          => "/categories/{$catSlug}/resources/{$resource->slug}",
+            'href'          => "/resource/{$resource->slug}",
         ];
     }
 

@@ -8,6 +8,7 @@ $router->group(['prefix' => 'api', 'middleware' => ['cors']], function ($router)
     $router->get('/categories',                              'App\Controllers\Api\CategoryController@index');
     $router->get('/categories/{slug}',                       'App\Controllers\Api\CategoryController@show');
     $router->get('/categories/{catSlug}/resources/{resSlug}', 'App\Controllers\Api\ResourceController@show');
+    $router->get('/resources/{slug}',                        'App\Controllers\Api\ResourceController@showBySlug');
     $router->get('/pending/{slug}',                          'App\Controllers\Api\PendingController@show');
     $router->get('/resources/{id}/comments',                 'App\Controllers\Api\CommentController@index');
     $router->get('/tags',                                    'App\Controllers\Api\TagController@index');

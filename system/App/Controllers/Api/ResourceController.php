@@ -4,7 +4,7 @@ namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
 use App\Services\ResourceService;
-use App\Services\SubcategoryService;
+use App\Services\CategoryService;
 use App\Services\VoteService;
 use App\Services\JwtService;
 use App\Transformers\ResourceTransformer;
@@ -45,6 +45,28 @@ class ResourceController extends BaseController
         $resource = $this->resourceService->findByCategoryAndSlug($category->id, $resSlug);
         if (!$resource) :
             return $this->response->problem(404, 'Not Found', "Resource '{$resSlug}' not found in '{$catSlug}'.");
+        endif;
+
+        $rank = $this->resourceService->computeRank($resource);
+
+        $user = $this->getAuthenticatedUser();
+        $userVote = $user ? $this->voteService->getUserVote($resource->id, $user->id) : null;
+
+        $data = ResourceTransformer::toDetail($resource, $rank, $userVote);
+
+        return $this->response->ok($data);
+    }
+
+    /**
+     * GET /api/resources/{slug}
+     *
+     * Returns resource detail by global slug.
+     */
+    public function showBySlug(string $slug): Response
+    {
+        $resource = $this->resourceService->findBySlug($slug);
+        if (!$resource) :
+            return $this->response->problem(404, 'Not Found', "Resource '{$slug}' not found.");
         endif;
 
         $rank = $this->resourceService->computeRank($resource);

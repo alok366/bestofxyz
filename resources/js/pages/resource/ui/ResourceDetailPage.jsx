@@ -11,19 +11,24 @@ import styles from './ResourceDetailPage.module.less';
  * host link, description, vote control, tag chips, and threaded discussion comments.
  */
 export const ResourceDetailPage = () => {
-    const { catSlug, resSlug } = useParams();
+    const { catSlug, resSlug, slug } = useParams();
+    const resourceSlug = resSlug || slug;
     const [resource, setResource] = useState(null);
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!catSlug || !resSlug) return;
+        if (!resourceSlug) return;
         setLoading(true);
         setError(null);
 
+        const endpoint = catSlug && resSlug
+            ? `/categories/${catSlug}/resources/${resSlug}`
+            : `/resources/${resourceSlug}`;
+
         bestofxyz
-            .get(`/categories/${catSlug}/resources/${resSlug}`)
+            .get(endpoint)
             .then((data) => {
                 setResource(data);
                 setLoading(false);
@@ -40,7 +45,7 @@ export const ResourceDetailPage = () => {
                 setError(err);
                 setLoading(false);
             });
-    }, [catSlug, resSlug]);
+    }, [catSlug, resSlug, resourceSlug]);
 
     if (loading) {
         return (
@@ -71,11 +76,12 @@ export const ResourceDetailPage = () => {
         );
     }
 
+    const categorySlug = resource.categorySlug || catSlug;
     const breadcrumb = [
         { label: 'Categories', path: '/categories' },
-        ...(resource.groupName ? [{ label: resource.groupName, path: '/categories' }] : []),
-        ...(resource.categoryName ? [{ label: resource.categoryName, path: `/categories/${resource.categorySlug || catSlug}` }] : []),
-        { label: resource.title, path: `/categories/${catSlug}/resources/${resSlug}` },
+        ...(resource.groupName ? [{ label: resource.groupName, path: `/categories/${resource.groupSlug || ''}` }] : []),
+        ...(resource.categoryName ? [{ label: resource.categoryName, path: `/categories/${categorySlug}` }] : []),
+        { label: resource.title, path: `/resource/${resourceSlug}` },
     ];
 
     const rankBadge = resource.rank ? `#${resource.rank} in ${resource.categoryName || 'Category'}` : null;

@@ -13,6 +13,13 @@ class EloquentResourceRepository extends BaseEloquentRepository
         $this->model = $model ?? new Resource();
     }
 
+    public function findBySlug(string $slug): ?Resource
+    {
+        return $this->model->where('slug', $slug)
+            ->with(['tags', 'submitter', 'category.parent'])
+            ->first();
+    }
+
     public function findByCategoryAndSlug(int $categoryId, string $slug): ?Resource
     {
         return $this->model->where('category_id', $categoryId)
