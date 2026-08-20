@@ -3,12 +3,10 @@
 namespace App\Services;
 
 use App\Repositories\Smart\SmartResourceRepository;
-use App\Repositories\Smart\SmartSubcategoryRepository;
 use App\Repositories\Smart\SmartCategoryRepository;
 use App\Repositories\Smart\SmartTagRepository;
 use App\Repositories\Smart\SmartVoteRepository;
 use App\Models\Resource;
-use App\Models\Subcategory;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Models\Vote;
@@ -23,34 +21,41 @@ use Carbon\Carbon;
 class ResourceService extends BaseService
 {
     protected SmartResourceRepository $resourceRepo;
-    protected SmartSubcategoryRepository $subcategoryRepo;
     protected SmartCategoryRepository $categoryRepo;
     protected SmartTagRepository $tagRepo;
     protected SmartVoteRepository $voteRepo;
 
     public function __construct(
         ?SmartResourceRepository $resourceRepo = null,
-        ?SmartSubcategoryRepository $subcategoryRepo = null,
         ?SmartCategoryRepository $categoryRepo = null,
         ?SmartTagRepository $tagRepo = null,
         ?SmartVoteRepository $voteRepo = null
     ) {
         $this->resourceRepo = $resourceRepo ?? new SmartResourceRepository();
-        $this->subcategoryRepo = $subcategoryRepo ?? new SmartSubcategoryRepository();
         $this->categoryRepo = $categoryRepo ?? new SmartCategoryRepository();
         $this->tagRepo = $tagRepo ?? new SmartTagRepository();
         $this->voteRepo = $voteRepo ?? new SmartVoteRepository();
         parent::__construct($this->resourceRepo, $this->resourceRepo);
     }
 
+    public function getResourcesForCategory(int $categoryId, string $sort = 'top', ?string $tag = null)
+    {
+        return $this->resourceRepo->getResourcesForCategory($categoryId, $sort, $tag);
+    }
+
     public function getResourcesForSubcategory(int $subcategoryId, string $sort = 'top', ?string $tag = null)
     {
-        return $this->resourceRepo->getResourcesForSubcategory($subcategoryId, $sort, $tag);
+        return $this->getResourcesForCategory($subcategoryId, $sort, $tag);
+    }
+
+    public function findByCategoryAndSlug(int $categoryId, string $slug): ?Resource
+    {
+        return $this->resourceRepo->findByCategoryAndSlug($categoryId, $slug);
     }
 
     public function findBySubcategoryAndSlug(int $subcategoryId, string $slug): ?Resource
     {
-        return $this->resourceRepo->findBySubcategoryAndSlug($subcategoryId, $slug);
+        return $this->findByCategoryAndSlug($subcategoryId, $slug);
     }
 
     public function computeRank(Resource $resource): int
@@ -58,9 +63,9 @@ class ResourceService extends BaseService
         return $this->resourceRepo->computeRank($resource);
     }
 
-    public function getYesterdayRankMap(int $subcategoryId): array
+    public function getYesterdayRankMap(int $categoryId): array
     {
-        return $this->resourceRepo->getYesterdayRankMap($subcategoryId);
+        return $this->resourceRepo->getYesterdayRankMap($categoryId);
     }
 
     /**
@@ -75,45 +80,45 @@ class ResourceService extends BaseService
     public function createResource(array $data, User $user): Resource
     {
         return DB::transaction(function () use ($data, $user) {
-            // 1. Resolve or create subcategory
-            $subcategoryId = $data['subcategory_id'] ?? null;
-            $newSubcategoryName = trim($data['new_subcategory_name'] ?? '');
-            $categoryId = $data['category_id'] ?? null;
+            // 1. Resolve or create category
+            $categoryId = $data['category_id'] ?? ($data['subcategory_id'] ?? null);
+            $newCategoryName = trim($data['new_category_name'] ?? ($data['new_subcategory_name'] ?? ''));
+            $parentId = $data['parent_id'] ?? null;
 
-            if ($subcategoryId) :
-                $subcategory = is_numeric($subcategoryId)
-                    ? Subcategory::find((int) $subcategoryId)
-                    : Subcategory::where('name', $subcategoryId)->orWhere('slug', $subcategoryId)->first();
-                if (!$subcategory) :
-                    throw new NotFoundException('Subcategory not found.');
-                endif;
-                if (!in_array($subcategory->status, ['live', 'pending'], true)) :
-                    throw new NotFoundException('This subcategory is not accepting submissions.');
-                endif;
-            elseif ($newSubcategoryName) :
-                if (!$categoryId) :
-                    throw new NotFoundException('Parent category_id is required to create a subcategory.');
-                endif;
+            if ($categoryId) :
                 $category = is_numeric($categoryId)
                     ? Category::find((int) $categoryId)
-                    : Category::where('slug', $categoryId)->orWhere('name', $categoryId)->first();
-                if (!$category) :
-                    throw new NotFoundException('Parent category not found.');
-                endif;
-                $categoryId = $category->id;
+                    : Category::where('name', $categoryId)->orWhere('slug', $categoryId)->first();
 
-                $slug = SlugGenerator::unique($newSubcategoryName, Subcategory::class);
-                $subcategory = Subcategory::create([
-                    'category_id'        => (int) $categoryId,
-                    'name'               => $newSubcategoryName,
+                if (!$category) :
+                    throw new NotFoundException('Category not found.');
+                endif;
+                if (!in_array($category->status, ['live', 'pending'], true)) :
+                    throw new NotFoundException('This category is not accepting submissions.');
+                endif;
+            elseif ($newCategoryName) :
+                $parent = null;
+                if ($parentId) :
+                    $parent = is_numeric($parentId)
+                        ? Category::find((int) $parentId)
+                        : Category::where('slug', $parentId)->orWhere('name', $parentId)->first();
+                    if (!$parent) :
+                        throw new NotFoundException('Parent category not found.');
+                    endif;
+                endif;
+
+                $slug = SlugGenerator::unique($newCategoryName, Category::class);
+                $category = Category::create([
+                    'parent_id'          => $parent ? (int) $parent->id : null,
+                    'name'               => $newCategoryName,
                     'slug'               => $slug,
-                    'description'        => $data['subcategory_description'] ?? "Community-curated resources for {$newSubcategoryName}.",
+                    'description'        => $data['category_description'] ?? ($data['subcategory_description'] ?? "Community-curated resources for {$newCategoryName}."),
                     'status'             => 'pending',
                     'proposed_by'        => (int) $user->id,
                     'resource_threshold' => 5,
                 ]);
             else :
-                throw new NotFoundException('Either subcategory_id or new_subcategory_name must be provided.');
+                throw new NotFoundException('Either category_id or new_category_name must be provided.');
             endif;
 
             // 2. Normalize URL
@@ -123,18 +128,18 @@ class ResourceService extends BaseService
             // 3. Compute url_hash (binary SHA-256)
             $urlHash = hash('sha256', $normalizedUrl, true);
 
-            // 4. Check for duplicate within this subcategory
-            $existing = Resource::where('subcategory_id', $subcategory->id)
+            // 4. Check for duplicate within this category
+            $existing = Resource::where('category_id', $category->id)
                 ->where('url_hash', $urlHash)
                 ->first();
 
             if ($existing) :
-                throw new DuplicateResourceException('This URL has already been submitted to this subcategory.');
+                throw new DuplicateResourceException('This URL has already been submitted to this category.');
             endif;
 
             // 5. Slug and host
             $title = trim($data['title'] ?? '');
-            $slug = SlugGenerator::uniqueWithin($title, Resource::class, 'slug', 'subcategory_id', (int) $subcategory->id);
+            $slug = SlugGenerator::uniqueWithin($title, Resource::class, 'slug', 'category_id', (int) $category->id);
 
             $host = parse_url($normalizedUrl, PHP_URL_HOST) ?? '';
             $host = preg_replace('/^www\./', '', strtolower($host));
@@ -142,16 +147,16 @@ class ResourceService extends BaseService
             // 6. Create resource
             $description = trim($data['description'] ?? '');
             $resource = Resource::create([
-                'subcategory_id' => (int) $subcategory->id,
-                'submitted_by'   => (int) $user->id,
-                'title'          => $title,
-                'slug'           => $slug,
-                'url'            => $normalizedUrl,
-                'url_hash'       => $urlHash,
-                'host'           => $host,
-                'description'    => $description,
-                'score'          => 1, // Auto-upvoted by submitter
-                'hot_score'      => (float) (time() / 45000),
+                'category_id'  => (int) $category->id,
+                'submitted_by' => (int) $user->id,
+                'title'        => $title,
+                'slug'         => $slug,
+                'url'          => $normalizedUrl,
+                'url_hash'     => $urlHash,
+                'host'         => $host,
+                'description'  => $description,
+                'score'        => 1, // Auto-upvoted by submitter
+                'hot_score'    => (float) (time() / 45000),
             ]);
 
             // 7. Resolve and attach tags
@@ -181,19 +186,20 @@ class ResourceService extends BaseService
             ]);
 
             // 9. Check pending -> live promotion
-            if ($subcategory->isPending()) :
-                $count = Resource::where('subcategory_id', $subcategory->id)->count();
-                if ($count >= $subcategory->resource_threshold) :
-                    $subcategory->update([
+            if ($category->isPending()) :
+                $count = Resource::where('category_id', $category->id)->count();
+                if ($count >= $category->resource_threshold) :
+                    $category->update([
                         'status'      => 'live',
                         'promoted_at' => Carbon::now(),
                     ]);
                 endif;
             endif;
 
-            $resource->load(['subcategory.category', 'tags', 'submitter']);
+            $resource->load(['category.parent', 'tags', 'submitter']);
 
             return $resource;
         });
     }
 }
+

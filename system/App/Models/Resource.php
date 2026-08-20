@@ -9,20 +9,26 @@ class Resource extends Model
     protected $table = 'resources';
 
     protected $fillable = [
-        'subcategory_id', 'submitted_by', 'title', 'slug',
+        'category_id', 'submitted_by', 'title', 'slug',
         'url', 'url_hash', 'host', 'description', 'score', 'hot_score',
     ];
 
     protected $casts = [
-        'score'      => 'integer',
-        'hot_score'  => 'float',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'category_id' => 'integer',
+        'score'       => 'integer',
+        'hot_score'   => 'float',
+        'created_at'  => 'datetime',
+        'updated_at'  => 'datetime',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 
     public function subcategory()
     {
-        return $this->belongsTo(Subcategory::class);
+        return $this->category();
     }
 
     public function submitter()

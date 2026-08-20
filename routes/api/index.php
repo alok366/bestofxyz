@@ -6,7 +6,7 @@ $router->group(['prefix' => 'api', 'middleware' => ['cors']], function ($router)
 
     // ── Public read endpoints (no auth required) ───────────────────
     $router->get('/categories',                              'App\Controllers\Api\CategoryController@index');
-    $router->get('/categories/{slug}',                       'App\Controllers\Api\SubcategoryController@show');
+    $router->get('/categories/{slug}',                       'App\Controllers\Api\CategoryController@show');
     $router->get('/categories/{catSlug}/resources/{resSlug}', 'App\Controllers\Api\ResourceController@show');
     $router->get('/pending/{slug}',                          'App\Controllers\Api\PendingController@show');
     $router->get('/resources/{id}/comments',                 'App\Controllers\Api\CommentController@index');

@@ -3,7 +3,7 @@
 $sql = "
 CREATE TABLE resources (
     id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    subcategory_id  INT UNSIGNED NOT NULL,
+    category_id     INT UNSIGNED NOT NULL,
     submitted_by    INT UNSIGNED NOT NULL,
     title           VARCHAR(200) NOT NULL,
     slug            VARCHAR(220) NOT NULL,
@@ -16,14 +16,14 @@ CREATE TABLE resources (
     created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    UNIQUE KEY uq_resources_sub_url (subcategory_id, url_hash),
-    UNIQUE KEY uq_resources_sub_slug (subcategory_id, slug),
-    INDEX idx_resources_sub_score (subcategory_id, score DESC),
-    INDEX idx_resources_sub_created (subcategory_id, created_at DESC),
-    INDEX idx_resources_sub_hot (subcategory_id, hot_score DESC),
+    UNIQUE KEY uq_resources_cat_url (category_id, url_hash),
+    UNIQUE KEY uq_resources_cat_slug (category_id, slug),
+    INDEX idx_resources_cat_score (category_id, score DESC),
+    INDEX idx_resources_cat_created (category_id, created_at DESC),
+    INDEX idx_resources_cat_hot (category_id, hot_score DESC),
 
-    CONSTRAINT fk_resources_subcategory
-        FOREIGN KEY (subcategory_id) REFERENCES subcategories(id)
+    CONSTRAINT fk_resources_category
+        FOREIGN KEY (category_id) REFERENCES categories(id)
         ON DELETE RESTRICT ON UPDATE CASCADE,
 
     CONSTRAINT fk_resources_submitter
@@ -31,3 +31,4 @@ CREATE TABLE resources (
         ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ";
+

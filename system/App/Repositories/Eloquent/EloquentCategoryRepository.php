@@ -14,50 +14,69 @@ class EloquentCategoryRepository extends BaseEloquentRepository
 
     public function findBySlug(string $slug): ?Category
     {
-        return $this->model->where('slug', $slug)->first();
+        return $this->model->where('slug', $slug)
+            ->with(['parent', 'proposer'])
+            ->first();
+    }
+
+    public function findLiveBySlug(string $slug): ?Category
+    {
+        return $this->model->where('slug', $slug)
+            ->where('status', 'live')
+            ->with(['parent', 'proposer'])
+            ->first();
+    }
+
+    public function findPendingBySlug(string $slug): ?Category
+    {
+        return $this->model->where('slug', $slug)
+            ->where('status', 'pending')
+            ->with(['parent', 'proposer'])
+            ->first();
     }
 
     /**
-     * Get all categories with subcategories (live + pending),
-     * resource counts, and top resource per subcategory.
+     * Get all top-level root categories with their child categories (live + pending),
+     * resource counts, and top resource per child category.
      */
     public function allCategoriesTree(): array
     {
-        $categories = $this->model
+        $rootCategories = $this->model
+            ->whereNull('parent_id')
             ->orderBy('display_order', 'asc')
-            ->with(['subcategories' => function ($query) {
+            ->with(['children' => function ($query) {
                 $query->whereIn('status', ['live', 'pending'])
                       ->withCount('resources')
                       ->orderBy('name', 'asc');
             }])
             ->get();
 
-        // For each subcategory, load the top resource
-        $subcatIds = [];
-        foreach ($categories as $category) :
-            foreach ($category->subcategories as $subcat) :
-                $subcatIds[] = $subcat->id;
+        // For each child category, load the top resource
+        $childIds = [];
+        foreach ($rootCategories as $category) :
+            foreach ($category->children as $child) :
+                $childIds[] = $child->id;
             endforeach;
         endforeach;
 
         $topResources = [];
-        if (!empty($subcatIds)) :
-            // Get top resource per subcategory
-            $resources = Resource::whereIn('subcategory_id', $subcatIds)
+        if (!empty($childIds)) :
+            $resources = Resource::whereIn('category_id', $childIds)
                 ->orderBy('score', 'desc')
                 ->orderBy('created_at', 'asc')
                 ->get();
 
             foreach ($resources as $res) :
-                if (!isset($topResources[$res->subcategory_id])) :
-                    $topResources[$res->subcategory_id] = $res;
+                if (!isset($topResources[$res->category_id])) :
+                    $topResources[$res->category_id] = $res;
                 endif;
             endforeach;
         endif;
 
         return [
-            'categories' => $categories,
+            'categories'   => $rootCategories,
             'topResources' => $topResources,
         ];
     }
 }
+

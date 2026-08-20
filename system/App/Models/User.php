@@ -24,9 +24,14 @@ class User extends Model
         return $this->hasMany(Resource::class, 'submitted_by');
     }
 
+    public function proposedCategories()
+    {
+        return $this->hasMany(Category::class, 'proposed_by');
+    }
+
     public function proposedSubcategories()
     {
-        return $this->hasMany(Subcategory::class, 'proposed_by');
+        return $this->proposedCategories();
     }
 
     public function votes()

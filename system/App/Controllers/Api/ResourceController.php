@@ -16,17 +16,17 @@ use Illuminate\Http\Response;
 class ResourceController extends BaseController
 {
     protected ResourceService $resourceService;
-    protected SubcategoryService $subcategoryService;
+    protected CategoryService $categoryService;
     protected VoteService $voteService;
 
     public function __construct(
         ?ResourceService $resourceService = null,
-        ?SubcategoryService $subcategoryService = null,
+        ?CategoryService $categoryService = null,
         ?VoteService $voteService = null
     ) {
         parent::__construct();
         $this->resourceService = $resourceService ?? new ResourceService();
-        $this->subcategoryService = $subcategoryService ?? new SubcategoryService();
+        $this->categoryService = $categoryService ?? new CategoryService();
         $this->voteService = $voteService ?? new VoteService();
     }
 
@@ -37,12 +37,12 @@ class ResourceController extends BaseController
      */
     public function show(string $catSlug, string $resSlug): Response
     {
-        $subcategory = $this->subcategoryService->findBySlug($catSlug);
-        if (!$subcategory) :
+        $category = $this->categoryService->findLiveBySlug($catSlug);
+        if (!$category) :
             return $this->response->problem(404, 'Not Found', "Category '{$catSlug}' not found.");
         endif;
 
-        $resource = $this->resourceService->findBySubcategoryAndSlug($subcategory->id, $resSlug);
+        $resource = $this->resourceService->findByCategoryAndSlug($category->id, $resSlug);
         if (!$resource) :
             return $this->response->problem(404, 'Not Found', "Resource '{$resSlug}' not found in '{$catSlug}'.");
         endif;
@@ -61,7 +61,7 @@ class ResourceController extends BaseController
      * POST /api/resources
      *
      * Submit a resource (requires authentication).
-     * Supports Mode 1 (existing subcategory) and Mode 2 (proposing new subcategory).
+     * Supports Mode 1 (existing category) and Mode 2 (proposing new category under a parent).
      */
     public function store(): Response
     {
@@ -77,8 +77,10 @@ class ResourceController extends BaseController
             'url'                  => 'required|string|max:2048',
             'title'                => 'required|string|max:200',
             'description'          => 'nullable|string|max:500',
-            'subcategory_id'       => 'nullable|integer',
-            'category_id'          => 'nullable|integer',
+            'category_id'          => 'nullable',
+            'subcategory_id'       => 'nullable',
+            'parent_id'            => 'nullable',
+            'new_category_name'    => 'nullable|string|max:150',
             'new_subcategory_name' => 'nullable|string|max:150',
         ];
 
@@ -92,22 +94,25 @@ class ResourceController extends BaseController
             );
         endif;
 
-        if (empty($data['subcategory_id']) && empty($data['new_subcategory_name'])) :
+        $hasExisting = !empty($data['category_id']) || !empty($data['subcategory_id']);
+        $hasNew = !empty($data['new_category_name']) || !empty($data['new_subcategory_name']);
+
+        if (!$hasExisting && !$hasNew) :
             return $this->response->problem(
                 422,
                 'Validation Error',
-                'Please select an existing subcategory or provide a new subcategory name.',
-                ['errors' => ['subcategory_id' => ['Subcategory selection or name is required.']]]
+                'Please select an existing category or provide a new category name.',
+                ['errors' => ['category_id' => ['Category selection or name is required.']]]
             );
         endif;
 
         try {
             $resource = $this->resourceService->createResource($data, $user);
 
-            $subSlug = $resource->subcategory->slug ?? '';
-            $href = $resource->subcategory->isLive()
-                ? "/categories/{$subSlug}/resources/{$resource->slug}"
-                : "/pending/{$subSlug}";
+            $catSlug = $resource->category->slug ?? '';
+            $href = $resource->category->isLive()
+                ? "/categories/{$catSlug}/resources/{$resource->slug}"
+                : "/pending/{$catSlug}";
 
             return $this->response->ok([
                 'id'    => (int) $resource->id,

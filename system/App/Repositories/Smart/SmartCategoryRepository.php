@@ -19,6 +19,16 @@ class SmartCategoryRepository extends BaseSmartRepository
         return $this->eloquent->findBySlug($slug);
     }
 
+    public function findLiveBySlug(string $slug): ?Category
+    {
+        return $this->eloquent->findLiveBySlug($slug);
+    }
+
+    public function findPendingBySlug(string $slug): ?Category
+    {
+        return $this->eloquent->findPendingBySlug($slug);
+    }
+
     public function allCategoriesTree(): array
     {
         return $this->eloquent->allCategoriesTree();

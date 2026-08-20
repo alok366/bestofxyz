@@ -3,16 +3,11 @@
 namespace App\Transformers;
 
 use App\Models\Category;
-use App\Models\Subcategory;
 
 class CategoryTransformer
 {
     /**
-     * Transform a category tree collection with top resources.
-     *
-     * @param iterable $categories
-     * @param array $topResources
-     * @return array
+     * Transform a category tree collection with top resources for directory view.
      */
     public static function toTreeResponse(iterable $categories, array $topResources = []): array
     {
@@ -21,8 +16,9 @@ class CategoryTransformer
         foreach ($categories as $category) :
             $totalResources = 0;
             $subcategoriesData = [];
+            $children = $category->children ?? ($category->subcategories ?? []);
 
-            foreach ($category->subcategories as $subcat) :
+            foreach ($children as $subcat) :
                 $count = (int) ($subcat->resources_count ?? 0);
                 $totalResources += $count;
 
@@ -56,6 +52,49 @@ class CategoryTransformer
         return $result;
     }
 
+    /**
+     * Transform a live category model with its resources into API response format.
+     */
+    public static function toLiveResponse(Category $category, $resources, string $sort, array $yesterdayRankMap = []): array
+    {
+        return [
+            'id'            => (int) $category->id,
+            'name'          => $category->name,
+            'slug'          => $category->slug,
+            'group'         => $category->parent->name ?? '',
+            'groupSlug'     => $category->parent->slug ?? '',
+            'description'   => $category->description ?? '',
+            'resourceCount' => $resources->count(),
+            'resources'     => ResourceTransformer::collectionToList($resources, $sort, $yesterdayRankMap),
+        ];
+    }
+
+    /**
+     * Transform a pending category model with its resources into API response format.
+     */
+    public static function toPendingResponse(Category $category, $resources): array
+    {
+        $currentCount = $resources->count();
+        $requiredCount = (int) $category->resource_threshold;
+
+        return [
+            'id'           => (int) $category->id,
+            'name'         => $category->name,
+            'slug'         => $category->slug,
+            'group'        => $category->parent->name ?? '',
+            'groupSlug'    => $category->parent->slug ?? '',
+            'proposedBy'   => $category->proposer->username ?? 'community',
+            'proposedDate' => $category->created_at ? $category->created_at->format('M j, Y') : '',
+            'description'  => $category->description ?? '',
+            'threshold'    => [
+                'required' => $requiredCount,
+                'current'  => $currentCount,
+                'label'    => "{$currentCount} of {$requiredCount} resources needed to go live",
+            ],
+            'resources'    => ResourceTransformer::collectionToPendingList($resources),
+        ];
+    }
+
     public static function toResponse(Category $category): array
     {
         return [
@@ -68,3 +107,4 @@ class CategoryTransformer
         ];
     }
 }
+

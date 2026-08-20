@@ -44,7 +44,7 @@ class ResourceTransformer
      */
     public static function toListItem(Resource $resource, int $rank, array $delta): array
     {
-        $subSlug = $resource->subcategory->slug ?? '';
+        $catSlug = $resource->category->slug ?? '';
 
         return [
             'id'            => (int) $resource->id,
@@ -58,7 +58,7 @@ class ResourceTransformer
             'submitter'     => $resource->submitter->username ?? 'community',
             'submitterTime' => $resource->created_at ? $resource->created_at->diffForHumans() : '',
             'commentsCount' => (int) ($resource->comments_count ?? ($resource->comments ? $resource->comments->count() : 0)),
-            'href'          => "/categories/{$subSlug}/resources/{$resource->slug}",
+            'href'          => "/categories/{$catSlug}/resources/{$resource->slug}",
         ];
     }
 
@@ -91,9 +91,9 @@ class ResourceTransformer
         return [
             'id'            => (int) $resource->id,
             'rank'          => $rank,
-            'categoryName'  => $resource->subcategory->name ?? '',
-            'categorySlug'  => $resource->subcategory->slug ?? '',
-            'groupName'     => $resource->subcategory->category->name ?? '',
+            'categoryName'  => $resource->category->name ?? '',
+            'categorySlug'  => $resource->category->slug ?? '',
+            'groupName'     => $resource->category->parent->name ?? '',
             'title'         => $resource->title,
             'host'          => $resource->host,
             'href'          => $resource->url,

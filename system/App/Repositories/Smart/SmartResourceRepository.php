@@ -14,6 +14,21 @@ class SmartResourceRepository extends BaseSmartRepository
         $this->eloquent = $eloquent ?? new EloquentResourceRepository();
     }
 
+    public function findByCategoryAndSlug(int $categoryId, string $slug): ?Resource
+    {
+        return $this->eloquent->findByCategoryAndSlug($categoryId, $slug);
+    }
+
+    public function findByCategoryAndUrlHash(int $categoryId, string $urlHash): ?Resource
+    {
+        return $this->eloquent->findByCategoryAndUrlHash($categoryId, $urlHash);
+    }
+
+    public function getResourcesForCategory(int $categoryId, string $sort = 'top', ?string $tag = null)
+    {
+        return $this->eloquent->getResourcesForCategory($categoryId, $sort, $tag);
+    }
+
     public function findBySubcategoryAndSlug(int $subcategoryId, string $slug): ?Resource
     {
         return $this->eloquent->findBySubcategoryAndSlug($subcategoryId, $slug);
@@ -34,8 +49,9 @@ class SmartResourceRepository extends BaseSmartRepository
         return $this->eloquent->computeRank($resource);
     }
 
-    public function getYesterdayRankMap(int $subcategoryId): array
+    public function getYesterdayRankMap(int $categoryId): array
     {
-        return $this->eloquent->getYesterdayRankMap($subcategoryId);
+        return $this->eloquent->getYesterdayRankMap($categoryId);
     }
 }
+

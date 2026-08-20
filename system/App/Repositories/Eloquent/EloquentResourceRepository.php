@@ -13,24 +13,24 @@ class EloquentResourceRepository extends BaseEloquentRepository
         $this->model = $model ?? new Resource();
     }
 
-    public function findBySubcategoryAndSlug(int $subcategoryId, string $slug): ?Resource
+    public function findByCategoryAndSlug(int $categoryId, string $slug): ?Resource
     {
-        return $this->model->where('subcategory_id', $subcategoryId)
+        return $this->model->where('category_id', $categoryId)
             ->where('slug', $slug)
-            ->with(['tags', 'submitter', 'subcategory.category'])
+            ->with(['tags', 'submitter', 'category.parent'])
             ->first();
     }
 
-    public function findBySubcategoryAndUrlHash(int $subcategoryId, string $urlHash): ?Resource
+    public function findByCategoryAndUrlHash(int $categoryId, string $urlHash): ?Resource
     {
-        return $this->model->where('subcategory_id', $subcategoryId)
+        return $this->model->where('category_id', $categoryId)
             ->where('url_hash', $urlHash)
             ->first();
     }
 
-    public function getResourcesForSubcategory(int $subcategoryId, string $sort = 'top', ?string $tag = null)
+    public function getResourcesForCategory(int $categoryId, string $sort = 'top', ?string $tag = null)
     {
-        $query = $this->model->where('subcategory_id', $subcategoryId)
+        $query = $this->model->where('category_id', $categoryId)
             ->with(['tags', 'submitter'])
             ->withCount('comments');
 
@@ -59,7 +59,7 @@ class EloquentResourceRepository extends BaseEloquentRepository
 
     public function computeRank(Resource $resource): int
     {
-        return $this->model->where('subcategory_id', $resource->subcategory_id)
+        return $this->model->where('category_id', $resource->category_id)
             ->where(function ($q) use ($resource) {
                 $q->where('score', '>', $resource->score)
                   ->orWhere(function ($q2) use ($resource) {
@@ -70,10 +70,10 @@ class EloquentResourceRepository extends BaseEloquentRepository
             ->count() + 1;
     }
 
-    public function getYesterdayRankMap(int $subcategoryId): array
+    public function getYesterdayRankMap(int $categoryId): array
     {
         $yesterday = date('Y-m-d', strtotime('-1 day'));
-        $snapshots = ResourceRankSnapshot::where('subcategory_id', $subcategoryId)
+        $snapshots = ResourceRankSnapshot::where('category_id', $categoryId)
             ->where('snapshot_date', $yesterday)
             ->get(['resource_id', 'rank']);
 
@@ -84,4 +84,21 @@ class EloquentResourceRepository extends BaseEloquentRepository
 
         return $map;
     }
+
+    // Aliases for compatibility
+    public function findBySubcategoryAndSlug(int $subcategoryId, string $slug): ?Resource
+    {
+        return $this->findByCategoryAndSlug($subcategoryId, $slug);
+    }
+
+    public function findBySubcategoryAndUrlHash(int $subcategoryId, string $urlHash): ?Resource
+    {
+        return $this->findByCategoryAndUrlHash($subcategoryId, $urlHash);
+    }
+
+    public function getResourcesForSubcategory(int $subcategoryId, string $sort = 'top', ?string $tag = null)
+    {
+        return $this->getResourcesForCategory($subcategoryId, $sort, $tag);
+    }
 }
+

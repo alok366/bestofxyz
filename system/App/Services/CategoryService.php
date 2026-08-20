@@ -24,4 +24,14 @@ class CategoryService extends BaseService
     {
         return $this->categoryRepo->findBySlug($slug);
     }
+
+    public function findLiveBySlug(string $slug): ?Category
+    {
+        return $this->categoryRepo->findLiveBySlug($slug);
+    }
+
+    public function findPendingBySlug(string $slug): ?Category
+    {
+        return $this->categoryRepo->findPendingBySlug($slug);
+    }
 }
