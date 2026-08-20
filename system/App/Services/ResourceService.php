@@ -81,7 +81,9 @@ class ResourceService extends BaseService
             $categoryId = $data['category_id'] ?? null;
 
             if ($subcategoryId) :
-                $subcategory = Subcategory::find($subcategoryId);
+                $subcategory = is_numeric($subcategoryId)
+                    ? Subcategory::find((int) $subcategoryId)
+                    : Subcategory::where('name', $subcategoryId)->orWhere('slug', $subcategoryId)->first();
                 if (!$subcategory) :
                     throw new NotFoundException('Subcategory not found.');
                 endif;
@@ -92,10 +94,13 @@ class ResourceService extends BaseService
                 if (!$categoryId) :
                     throw new NotFoundException('Parent category_id is required to create a subcategory.');
                 endif;
-                $category = Category::find($categoryId);
+                $category = is_numeric($categoryId)
+                    ? Category::find((int) $categoryId)
+                    : Category::where('slug', $categoryId)->orWhere('name', $categoryId)->first();
                 if (!$category) :
                     throw new NotFoundException('Parent category not found.');
                 endif;
+                $categoryId = $category->id;
 
                 $slug = SlugGenerator::unique($newSubcategoryName, Subcategory::class);
                 $subcategory = Subcategory::create([

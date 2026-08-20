@@ -22,6 +22,10 @@ export const CommentThread = ({
     const [selectedSort, setSelectedSort] = useState(sortOptions[0] || 'Top');
     const [comments, setComments] = useState(initialComments);
 
+    React.useEffect(() => {
+        setComments(initialComments);
+    }, [initialComments]);
+
     const handleAddComment = (bodyText) => {
         const newComment = {
             id: `c-new-${Date.now()}`,

@@ -76,8 +76,8 @@ export const CategoryDirectoryCard = ({
                                     {sub.topResource} ·{' '}
                                     <span className={styles.score}>{sub.score}</span>
                                 </span>
-                            ) : sub.status ? (
-                                <span className={styles.status}>{sub.status}</span>
+                            ) : (sub.progress || sub.status) ? (
+                                <span className={styles.status}>{sub.progress || sub.status}</span>
                             ) : null}
                         </div>
                     </div>

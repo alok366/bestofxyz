@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Button } from '@shared/ui';
+import { bestofxyz } from '@shared/api/bestofxyz';
 import styles from './SubmitResourceForm.module.less';
 
 /**
@@ -28,6 +29,8 @@ export const SubmitResourceForm = ({
     const [tags, setTags] = useState(defaultTags);
     const [tagInput, setTagInput] = useState('');
     const [submitted, setSubmitted] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState(null);
 
     const handleAddTag = (e) => {
         if (e.key === 'Enter' || e.key === ',') {
@@ -46,24 +49,43 @@ export const SubmitResourceForm = ({
         setTags(tags.filter((t) => t !== tagToRemove));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!url.trim() || !title.trim()) return;
+
+        setSubmitting(true);
+        setSubmitError(null);
 
         const payload = {
             url: url.trim(),
             title: title.trim(),
             description: description.trim(),
-            domain,
-            category: categoryMode === 'existing' ? category : proposedCategory.trim(),
-            isNewCategory: categoryMode === 'new',
             tags,
         };
 
-        if (onSubmitSuccess) {
-            onSubmitSuccess(payload);
+        if (categoryMode === 'existing') {
+            payload.subcategory_id = category;
+        } else {
+            payload.category_id = domain;
+            payload.new_subcategory_name = proposedCategory.trim();
         }
-        setSubmitted(true);
+
+        try {
+            const res = await bestofxyz.post('/resources', payload);
+            if (onSubmitSuccess) {
+                onSubmitSuccess(res);
+            }
+            setSubmitted(true);
+        } catch (err) {
+            const msg =
+                err.detail ||
+                err.title ||
+                (err.errors ? Object.values(err.errors).flat().join(' ') : null) ||
+                'Failed to submit resource. Please verify you are logged in.';
+            setSubmitError(msg);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const handleReset = () => {
@@ -241,8 +263,14 @@ export const SubmitResourceForm = ({
                 <div className={styles.hint}>Optional. Used for filtering, not for ranking.</div>
             </div>
 
-            <Button variant="primary" type="submit" className={styles.submitBtn}>
-                Submit resource
+            {submitError && (
+                <div style={{ color: '#e53e3e', fontSize: '14px', marginBottom: '16px', lineHeight: 1.4 }}>
+                    {submitError}
+                </div>
+            )}
+
+            <Button variant="primary" type="submit" className={styles.submitBtn} disabled={submitting}>
+                {submitting ? 'Submitting…' : 'Submit resource'}
             </Button>
         </Card>
     );
