@@ -32,21 +32,21 @@ INSERT INTO categories (id, parent_id, name, slug, icon, description, status, re
     (60, 6, 'Best No-Code Database Tools',        'best-no-code-database-tools',        '', 'Visual databases, Airtable alternatives, and backends.', 'live', 5, 1);
 
 -- Default community user
-INSERT INTO users (id, username, email, password, role, is_active) VALUES
-    (1, 'community', 'community@bestofxyz.local', '$2y$12$e0MYzX12458019348912389124801923849012389012389012389', 'user', 1);
+INSERT INTO users (id, username, email, password_hash, role) VALUES
+    (1, 'community', 'community@bestofxyz.local', '\$2y\$12\$e0MYzX12458019348912389124801923849012389012389012389', 'user');
 
 -- Sample Resources for Best Rust Courses
-INSERT INTO resources (id, category_id, submitter_id, title, slug, url, url_hash, host, description, score, hot_score, status) VALUES
-    (1, 10, 1, 'The Rust Programming Language (The Book)', 'the-rust-programming-language-the-book', 'https://doc.rust-lang.org/book/', SHA2('https://doc.rust-lang.org/book/', 256), 'doc.rust-lang.org', 'The official Rust book by Steve Klabnik and Carol Nichols. The definitive guide to learning Rust from the ground up.', 214, 214.0, 'active'),
-    (2, 10, 1, 'Rust by Example', 'rust-by-example', 'https://doc.rust-lang.org/rust-by-example/', SHA2('https://doc.rust-lang.org/rust-by-example/', 256), 'doc.rust-lang.org', 'A collection of runnable examples that exercise various Rust concepts and standard libraries.', 186, 186.0, 'active'),
-    (3, 10, 1, 'Rustlings', 'rustlings', 'https://github.com/rust-lang/rustlings', SHA2('https://github.com/rust-lang/rustlings', 256), 'github.com', 'Small exercises to get you used to reading and writing Rust code. Great hands-on practice companion to The Book.', 152, 152.0, 'active'),
-    (4, 10, 1, 'Comprehensive Rust', 'comprehensive-rust', 'https://google.github.io/comprehensive-rust/', SHA2('https://google.github.io/comprehensive-rust/', 256), 'google.github.io', 'A multi-day Rust course developed by the Android team at Google.', 98, 98.0, 'active'),
-    (5, 10, 1, 'Zero To Production In Rust', 'zero-to-production-in-rust', 'https://www.zero2prod.com/', SHA2('https://www.zero2prod.com/', 256), 'zero2prod.com', 'An opinionated guide to backend development in Rust by Luca Palmieri.', 74, 74.0, 'active');
+INSERT INTO resources (id, category_id, submitted_by, title, slug, url, url_hash, host, description, score, hot_score) VALUES
+    (1, 10, 1, 'The Rust Programming Language (The Book)', 'the-rust-programming-language-the-book', 'https://doc.rust-lang.org/book/', UNHEX(SHA2('https://doc.rust-lang.org/book/', 256)), 'doc.rust-lang.org', 'The official Rust book by Steve Klabnik and Carol Nichols. The definitive guide to learning Rust from the ground up.', 214, 214.0),
+    (2, 10, 1, 'Rust by Example', 'rust-by-example', 'https://doc.rust-lang.org/rust-by-example/', UNHEX(SHA2('https://doc.rust-lang.org/rust-by-example/', 256)), 'doc.rust-lang.org', 'A collection of runnable examples that exercise various Rust concepts and standard libraries.', 186, 186.0),
+    (3, 10, 1, 'Rustlings', 'rustlings', 'https://github.com/rust-lang/rustlings', UNHEX(SHA2('https://github.com/rust-lang/rustlings', 256)), 'github.com', 'Small exercises to get you used to reading and writing Rust code. Great hands-on practice companion to The Book.', 152, 152.0),
+    (4, 10, 1, 'Comprehensive Rust', 'comprehensive-rust', 'https://google.github.io/comprehensive-rust/', UNHEX(SHA2('https://google.github.io/comprehensive-rust/', 256)), 'google.github.io', 'A multi-day Rust course developed by the Android team at Google.', 98, 98.0),
+    (5, 10, 1, 'Zero To Production In Rust', 'zero-to-production-in-rust', 'https://www.zero2prod.com/', UNHEX(SHA2('https://www.zero2prod.com/', 256)), 'zero2prod.com', 'An opinionated guide to backend development in Rust by Luca Palmieri.', 74, 74.0);
 
 -- Sample Resources for Pending Category (Best Rust Courses for Beginners)
-INSERT INTO resources (id, category_id, submitter_id, title, slug, url, url_hash, host, description, score, hot_score, status) VALUES
-    (6, 13, 1, 'Tour of Rust', 'tour-of-rust', 'https://tourofrust.com/', SHA2('https://tourofrust.com/', 256), 'tourofrust.com', 'An interactive step-by-step tour through the fundamental building blocks of Rust.', 12, 12.0, 'active'),
-    (7, 13, 1, 'Rust for Beginners - FreeCodeCamp', 'rust-for-beginners-freecodecamp', 'https://www.freecodecamp.org/news/rust-crash-course/', SHA2('https://www.freecodecamp.org/news/rust-crash-course/', 256), 'freecodecamp.org', 'A beginner-friendly crash course into Rust programming basics and syntax.', 8, 8.0, 'active');
+INSERT INTO resources (id, category_id, submitted_by, title, slug, url, url_hash, host, description, score, hot_score) VALUES
+    (6, 13, 1, 'Tour of Rust', 'tour-of-rust', 'https://tourofrust.com/', UNHEX(SHA2('https://tourofrust.com/', 256)), 'tourofrust.com', 'An interactive step-by-step tour through the fundamental building blocks of Rust.', 12, 12.0),
+    (7, 13, 1, 'Rust for Beginners - FreeCodeCamp', 'rust-for-beginners-freecodecamp', 'https://www.freecodecamp.org/news/rust-crash-course/', UNHEX(SHA2('https://www.freecodecamp.org/news/rust-crash-course/', 256)), 'freecodecamp.org', 'A beginner-friendly crash course into Rust programming basics and syntax.', 8, 8.0);
 
 -- Resource Tags
 INSERT INTO resource_tags (resource_id, tag_id) VALUES
