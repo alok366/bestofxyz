@@ -68,6 +68,8 @@ HELP;
      */
     public function handle(array $args): int
     {
+        $this->ensureTableExists();
+
         $files = glob($this->migrationsPath . "*.php");
         $pending = [];
         $count = 1;
@@ -154,6 +156,22 @@ HELP;
     }
 
     /**
+     * Ensure the _system_updates tracking table exists.
+     *
+     * @return void
+     */
+    private function ensureTableExists(): void
+    {
+        DB::statement("
+            CREATE TABLE IF NOT EXISTS _system_updates (
+                id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                update_name VARCHAR(255) NOT NULL UNIQUE,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ");
+    }
+
+    /**
      * Get the display name (filename without path prefix).
      *
      * @param string $file Full path.
@@ -165,3 +183,4 @@ HELP;
         return str_replace($this->migrationsPath, '', $file);
     }
 }
+
