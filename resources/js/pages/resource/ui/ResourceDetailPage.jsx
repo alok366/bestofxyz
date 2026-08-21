@@ -88,6 +88,12 @@ export const ResourceDetailPage = () => {
     const topicPath = resource.categorySlug ? `/categories/${resource.categorySlug}` : (catSlug ? `/categories/${catSlug}` : '/categories');
     const topic = resource.categoryName || 'category';
 
+    const handleCommentSubmit = async (body) => {
+        if (!resource?.id) return null;
+        const res = await bestofxyz.post(`/resources/${resource.id}/comments`, { body });
+        return res;
+    };
+
     return (
         <div className={styles.page}>
             <div className={styles.container}>
@@ -157,6 +163,7 @@ export const ResourceDetailPage = () => {
                         commentsCount={comments.length}
                         sortOptions={['Top', 'New']}
                         currentUser={{ initials: 'Y', name: 'You' }}
+                        onCommentSubmit={handleCommentSubmit}
                     />
                 </section>
 

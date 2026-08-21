@@ -18,6 +18,7 @@ export const CommentThread = ({
     commentsCount,
     sortOptions = ['Top', 'New'],
     currentUser = { initials: 'Y', name: 'You' },
+    onCommentSubmit,
 }) => {
     const [selectedSort, setSelectedSort] = useState(sortOptions[0] || 'Top');
     const [comments, setComments] = useState(initialComments);
@@ -26,7 +27,20 @@ export const CommentThread = ({
         setComments(initialComments);
     }, [initialComments]);
 
-    const handleAddComment = (bodyText) => {
+    const handleAddComment = async (bodyText) => {
+        if (onCommentSubmit) {
+            try {
+                const created = await onCommentSubmit(bodyText);
+                if (created) {
+                    setComments([created, ...comments]);
+                    return;
+                }
+            } catch (err) {
+                console.error('Failed to post comment', err);
+                return;
+            }
+        }
+
         const newComment = {
             id: `c-new-${Date.now()}`,
             author: currentUser.name || 'You',

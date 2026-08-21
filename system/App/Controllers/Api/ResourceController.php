@@ -152,31 +152,4 @@ class ResourceController extends BaseController
             );
         }
     }
-
-    /**
-     * Resolve the authenticated user from request attributes, session, or optional Bearer token.
-     */
-    protected function getAuthenticatedUser(): ?User
-    {
-        $user = $this->request()->attributes->get('auth_user') ?? ($_SESSION['login'] ?? null);
-        if ($user instanceof User) :
-            return $user;
-        endif;
-
-        $authHeader = $this->request()->header('Authorization');
-        if ($authHeader && str_starts_with($authHeader, 'Bearer ')) :
-            $token = substr($authHeader, 7);
-            try {
-                $jwtService = new JwtService();
-                $payload = $jwtService->validateToken($token);
-                if (!empty($payload['sub'])) :
-                    return User::find((int) $payload['sub']);
-                endif;
-            } catch (\Throwable $e) {
-                // Ignore token errors for public endpoints
-            }
-        endif;
-
-        return null;
-    }
 }

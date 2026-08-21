@@ -25,7 +25,7 @@ class CommentTransformer
                 'author'   => $comment->author->username ?? 'anonymous',
                 'timeAgo'  => $comment->created_at ? $comment->created_at->diffForHumans() : '',
                 'votes'    => (int) $comment->score,
-                'body'     => $comment->body,
+                'body'     => htmlspecialchars($comment->body ?? '', ENT_QUOTES, 'UTF-8'),
                 'userVote' => $userVotes[$id] ?? null,
                 'parentId' => $comment->parent_id ? (int) $comment->parent_id : null,
                 'replies'  => [],
@@ -42,6 +42,7 @@ class CommentTransformer
                 $tree[] = &$node;
             endif;
         endforeach;
+        unset($node);
 
         return $tree;
     }
@@ -56,7 +57,7 @@ class CommentTransformer
             'author'   => $comment->author->username ?? 'anonymous',
             'timeAgo'  => $comment->created_at ? $comment->created_at->diffForHumans() : 'just now',
             'votes'    => (int) $comment->score,
-            'body'     => $comment->body,
+            'body'     => htmlspecialchars($comment->body ?? '', ENT_QUOTES, 'UTF-8'),
             'userVote' => $userVote,
             'replies'  => [],
         ];

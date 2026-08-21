@@ -48,13 +48,34 @@ class CommentVoteController extends BaseController
         } catch (NotFoundException $e) {
             return $this->response->problem(404, 'Not Found', $e->getMessage());
         } catch (\Throwable $e) {
-            return $this->response->problem(500, 'Server Error', 'Failed to process comment vote: ' . $e->getMessage());
+            return $this->response->problem(500, 'Server Error',
+                env('MIX_APP_ENV') === 'production' ? 'An unexpected error occurred while processing vote.' : 'Failed to process comment vote: ' . $e->getMessage()
+            );
         }
     }
 
-    protected function getAuthenticatedUser(): ?User
+    /**
+     * DELETE /api/comments/{id}/vote
+     *
+     * Remove the authenticated user's vote on a comment.
+     */
+    public function destroy($id): Response
     {
-        $user = $this->request()->attributes->get('auth_user') ?? ($_SESSION['login'] ?? null);
-        return ($user instanceof User) ? $user : null;
+        $user = $this->getAuthenticatedUser();
+        if (!$user) :
+            return $this->response->problem(401, 'Unauthorized', 'Authentication required.');
+        endif;
+
+        try {
+            $result = $this->commentVoteService->removeVote((int) $id, (int) $user->id);
+
+            return $this->response->ok($result);
+        } catch (NotFoundException $e) {
+            return $this->response->problem(404, 'Not Found', $e->getMessage());
+        } catch (\Throwable $e) {
+            return $this->response->problem(500, 'Server Error',
+                env('MIX_APP_ENV') === 'production' ? 'An unexpected error occurred while removing vote.' : 'Failed to remove comment vote: ' . $e->getMessage()
+            );
+        }
     }
 }

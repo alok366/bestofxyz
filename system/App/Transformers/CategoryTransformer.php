@@ -16,7 +16,7 @@ class CategoryTransformer
         foreach ($categories as $category) :
             $totalResources = 0;
             $subcategoriesData = [];
-            $children = $category->children ?? ($category->subcategories ?? []);
+            $children = $category->children ?? [];
 
             foreach ($children as $subcat) :
                 $count = (int) ($subcat->resources_count ?? 0);

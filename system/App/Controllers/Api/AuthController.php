@@ -132,7 +132,9 @@ class AuthController extends BaseController
         } catch (\Firebase\JWT\ExpiredException $e) {
             return $this->response->problem(401, 'Token Expired', 'Refresh token has expired. Please log in again.');
         } catch (\Throwable $e) {
-            return $this->response->problem(401, 'Unauthorized', 'Invalid or revoked refresh token: ' . $e->getMessage());
+            return $this->response->problem(401, 'Unauthorized',
+                env('MIX_APP_ENV') === 'production' ? 'Invalid or revoked refresh token.' : 'Invalid or revoked refresh token: ' . $e->getMessage()
+            );
         }
     }
 

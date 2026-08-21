@@ -57,7 +57,7 @@ class ResourceTransformer
             'tags'          => $resource->tags ? $resource->tags->pluck('name')->toArray() : [],
             'submitter'     => $resource->submitter->username ?? 'community',
             'submitterTime' => $resource->created_at ? $resource->created_at->diffForHumans() : '',
-            'commentsCount' => (int) ($resource->comments_count ?? ($resource->comments ? $resource->comments->count() : 0)),
+            'commentsCount' => (int) ($resource->comments_count ?? 0),
             'href'          => "/resource/{$resource->slug}",
         ];
     }
@@ -78,7 +78,7 @@ class ResourceTransformer
             'tags'          => $resource->tags ? $resource->tags->pluck('name')->toArray() : [],
             'submitter'     => $resource->submitter->username ?? 'community',
             'submitterTime' => $resource->created_at ? $resource->created_at->format('M j, Y') : '',
-            'commentsCount' => (int) ($resource->comments_count ?? ($resource->comments ? $resource->comments->count() : 0)),
+            'commentsCount' => (int) ($resource->comments_count ?? 0),
             'href'          => '#',
         ];
     }

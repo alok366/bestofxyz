@@ -19,6 +19,9 @@ class JwtService
     {
         $config = config('auth.jwt') ?? [];
         $this->secret = $config['secret'] ?? env('JWT_SECRET', 'secret');
+        if (empty($this->secret) || ($this->secret === 'secret' && env('MIX_APP_ENV') === 'production')) :
+            throw new \RuntimeException('JWT secret key is not configured securely.');
+        endif;
         $this->algorithm = $config['algorithm'] ?? 'HS256';
         $this->accessTtl = (int) ($config['access_ttl'] ?? 900);
         $this->refreshTtl = (int) ($config['refresh_ttl'] ?? 604800);
@@ -110,14 +113,18 @@ class JwtService
         $jti = $payload['jti'] ?? null;
         if ($jti) :
             // If Redis has recorded refresh tokens, check if this one was revoked
+            $isRevoked = false;
             try {
-                if (RedisService::exists("jwt:revoked:{$jti}")) :
-                    throw new Exception('Refresh token has been revoked.');
-                endif;
-                $this->revokeRefreshToken($jti);
+                $isRevoked = (bool) RedisService::exists("jwt:revoked:{$jti}");
             } catch (\Throwable $e) {
-                // Redis is optional
+                // Redis is optional / connection unavailable
             }
+
+            if ($isRevoked) :
+                throw new Exception('Refresh token has been revoked.');
+            endif;
+
+            $this->revokeRefreshToken($jti);
         endif;
 
         $userId = (int) ($payload['sub'] ?? 0);

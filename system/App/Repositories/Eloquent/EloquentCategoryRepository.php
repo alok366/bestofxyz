@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Category;
 use App\Models\Resource;
+use Illuminate\Database\Capsule\Manager as DB;
 
 class EloquentCategoryRepository extends BaseEloquentRepository
 {
@@ -43,6 +44,7 @@ class EloquentCategoryRepository extends BaseEloquentRepository
     {
         $rootCategories = $this->model
             ->whereNull('parent_id')
+            ->where('status', '!=', 'archived')
             ->orderBy('display_order', 'asc')
             ->with(['children' => function ($query) {
                 $query->whereIn('status', ['live', 'pending'])
@@ -51,25 +53,35 @@ class EloquentCategoryRepository extends BaseEloquentRepository
             }])
             ->get();
 
-        // For each child category, load the top resource
+        // For each child category, load the top-ranked resource
         $childIds = [];
         foreach ($rootCategories as $category) :
             foreach ($category->children as $child) :
-                $childIds[] = $child->id;
+                $childIds[] = (int) $child->id;
             endforeach;
         endforeach;
 
         $topResources = [];
         if (!empty($childIds)) :
-            $resources = Resource::whereIn('category_id', $childIds)
-                ->orderBy('score', 'desc')
-                ->orderBy('created_at', 'asc')
-                ->get();
+            $subQuery = Resource::select(
+                'id',
+                'category_id',
+                'title',
+                'score',
+                DB::raw('ROW_NUMBER() OVER (PARTITION BY category_id ORDER BY score DESC, created_at ASC) as rn')
+            )->whereIn('category_id', $childIds);
+
+            $resources = DB::table(DB::raw("({$subQuery->toSql()}) as ranked"))
+                ->mergeBindings($subQuery->getQuery())
+                ->where('rn', 1)
+                ->get(['id', 'category_id', 'title', 'score']);
 
             foreach ($resources as $res) :
-                if (!isset($topResources[$res->category_id])) :
-                    $topResources[$res->category_id] = $res;
-                endif;
+                $topResources[$res->category_id] = (object) [
+                    'id'    => (int) $res->id,
+                    'title' => $res->title,
+                    'score' => (int) $res->score,
+                ];
             endforeach;
         endif;
 

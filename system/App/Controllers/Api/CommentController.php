@@ -79,31 +79,9 @@ class CommentController extends BaseController
         } catch (NotFoundException $e) {
             return $this->response->problem(404, 'Not Found', $e->getMessage());
         } catch (\Throwable $e) {
-            return $this->response->problem(500, 'Server Error', 'Failed to post comment: ' . $e->getMessage());
+            return $this->response->problem(500, 'Server Error',
+                env('MIX_APP_ENV') === 'production' ? 'An unexpected error occurred while posting comment.' : 'Failed to post comment: ' . $e->getMessage()
+            );
         }
-    }
-
-    protected function getAuthenticatedUser(): ?User
-    {
-        $user = $this->request()->attributes->get('auth_user') ?? ($_SESSION['login'] ?? null);
-        if ($user instanceof User) :
-            return $user;
-        endif;
-
-        $authHeader = $this->request()->header('Authorization');
-        if ($authHeader && str_starts_with($authHeader, 'Bearer ')) :
-            $token = substr($authHeader, 7);
-            try {
-                $jwtService = new JwtService();
-                $payload = $jwtService->validateToken($token);
-                if (!empty($payload['sub'])) :
-                    return User::find((int) $payload['sub']);
-                endif;
-            } catch (\Throwable $e) {
-                // Ignore for public reads
-            }
-        endif;
-
-        return null;
     }
 }

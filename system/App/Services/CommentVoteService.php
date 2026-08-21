@@ -83,4 +83,47 @@ class CommentVoteService extends BaseService
             ];
         });
     }
+
+    /**
+     * Remove a user's vote on a comment.
+     *
+     * @param int $commentId
+     * @param int $userId
+     * @return array ['score' => int, 'userVote' => null, 'changed' => bool]
+     * @throws NotFoundException
+     */
+    public function removeVote(int $commentId, int $userId): array
+    {
+        return DB::transaction(function () use ($commentId, $userId) {
+            $comment = Comment::find($commentId);
+            if (!$comment) :
+                throw new NotFoundException('Comment not found.');
+            endif;
+
+            $existing = CommentVote::where('comment_id', $commentId)
+                ->where('user_id', $userId)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$existing) :
+                return [
+                    'score'    => (int) $comment->score,
+                    'userVote' => null,
+                    'changed'  => false,
+                ];
+            endif;
+
+            $delta = -1 * (int) $existing->vote_type;
+            $existing->delete();
+
+            Comment::where('id', $commentId)->increment('score', $delta);
+            $newScore = (int) Comment::where('id', $commentId)->value('score');
+
+            return [
+                'score'    => $newScore,
+                'userVote' => null,
+                'changed'  => true,
+            ];
+        });
+    }
 }

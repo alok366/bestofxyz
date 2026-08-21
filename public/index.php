@@ -17,12 +17,20 @@ try {
     }
 
 } catch (Exception $e) {
-    if (str_starts_with($request->getPathInfo(), '/api/')) {
+    error_log($e);
+    if (isset($request) && str_starts_with($request->getPathInfo(), '/api/')) {
         header('HTTP/1.1 500 Internal Server Error');
-        header('Content-Type: application/json');
-        echo json_encode(['error' => $e->getMessage()]);
+        header('Content-Type: application/problem+json');
+        $detail = (env('MIX_APP_ENV') === 'production' && !config('app.debug'))
+            ? 'An unexpected server error occurred.'
+            : $e->getMessage();
+        echo json_encode([
+            'type'   => 'https://httpstatuses.com/500',
+            'title'  => 'Internal Server Error',
+            'detail' => $detail,
+            'status' => 500,
+        ]);
     } else {
-        error_log($e);
         $controller = new \App\Controllers\ErrorController();
         $controller->show500($e);
     }

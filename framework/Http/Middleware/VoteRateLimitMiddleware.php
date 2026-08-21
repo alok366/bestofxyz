@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Vote;
+use App\Models\CommentVote;
 use Carbon\Carbon;
 
 class VoteRateLimitMiddleware
@@ -24,11 +25,14 @@ class VoteRateLimitMiddleware
         if ($user && isset($user->id)) :
             $userId = (int) $user->id;
             $oneMinuteAgo = Carbon::now()->subMinute();
-            $recentVotes = Vote::where('user_id', $userId)
+            $recentResourceVotes = Vote::where('user_id', $userId)
+                ->where('created_at', '>=', $oneMinuteAgo)
+                ->count();
+            $recentCommentVotes = CommentVote::where('user_id', $userId)
                 ->where('created_at', '>=', $oneMinuteAgo)
                 ->count();
 
-            if ($recentVotes >= 30) :
+            if (($recentResourceVotes + $recentCommentVotes) >= 30) :
                 return new Response(
                     json_encode([
                         'type'   => 'https://httpstatuses.com/429',

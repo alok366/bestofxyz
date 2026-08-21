@@ -110,6 +110,9 @@ class ResourceService extends BaseService
                     if (!$parent) :
                         throw new NotFoundException('Parent category not found.');
                     endif;
+                    if (!$parent->isRoot()) :
+                        throw new \InvalidArgumentException('Subcategories can only be created under top-level root categories.');
+                    endif;
                 endif;
 
                 $slug = SlugGenerator::unique($newCategoryName, Category::class);
@@ -130,6 +133,13 @@ class ResourceService extends BaseService
             $rawUrl = $data['url'] ?? '';
             $normalizedUrl = UrlNormalizer::normalize($rawUrl);
 
+            $host = parse_url($normalizedUrl, PHP_URL_HOST) ?? '';
+            $host = preg_replace('/^www\./', '', strtolower($host));
+
+            if (!filter_var($normalizedUrl, FILTER_VALIDATE_URL) || !str_contains($host, '.')) :
+                throw new \InvalidArgumentException('Please provide a valid website URL with a domain name.');
+            endif;
+
             // 3. Compute url_hash (binary SHA-256)
             $urlHash = hash('sha256', $normalizedUrl, true);
 
@@ -144,10 +154,7 @@ class ResourceService extends BaseService
 
             // 5. Slug and host
             $title = trim($data['title'] ?? '');
-            $slug = SlugGenerator::uniqueWithin($title, Resource::class, 'slug', 'category_id', (int) $category->id);
-
-            $host = parse_url($normalizedUrl, PHP_URL_HOST) ?? '';
-            $host = preg_replace('/^www\./', '', strtolower($host));
+            $slug = SlugGenerator::unique($title, Resource::class, 'slug');
 
             // 6. Create resource
             $description = trim($data['description'] ?? '');

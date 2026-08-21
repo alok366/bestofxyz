@@ -64,10 +64,10 @@ export const SubmitResourceForm = ({
         };
 
         if (categoryMode === 'existing') {
-            payload.subcategory_id = category;
+            payload.category_id = category;
         } else {
-            payload.category_id = domain;
-            payload.new_subcategory_name = proposedCategory.trim();
+            payload.parent_id = domain;
+            payload.new_category_name = proposedCategory.trim();
         }
 
         try {
