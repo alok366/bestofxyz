@@ -3,7 +3,7 @@ import { resolve } from 'path';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), ['VITE_', 'MIX_']);
+  const env = loadEnv(mode, process.cwd(), '');
 
   return {
     root: resolve(__dirname),
@@ -13,10 +13,10 @@ export default defineConfig(({ mode }) => {
       react(),
     ],
 
-    envPrefix: ['VITE_', 'MIX_'],
+    envPrefix: ['VITE_'],
 
     define: {
-      __ASSET_URL__: JSON.stringify(env.MIX_ASSET_URL || ''),
+      __ASSET_URL__: JSON.stringify(env.VITE_ASSET_URL || env.APP_ASSET_URL || ''),
       global: 'window',
     },
 

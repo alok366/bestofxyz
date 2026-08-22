@@ -11,7 +11,7 @@ return [
     | Values: 'development', 'staging', 'production'
     |
     */
-    'env' => env('MIX_APP_ENV', 'development'),
+    'env' => env('APP_ENV', 'development'),
 
     /*
     |--------------------------------------------------------------------------
@@ -25,11 +25,11 @@ return [
     | Application URL & Paths
     |--------------------------------------------------------------------------
     */
-    'url' => env('MIX_URL', 'http://localhost/'),
-    'path' => env('MIX_PATH', '/var/www/bestofxyz/public_html/'),
-    'domain' => env('MIX_DOMAIN_NAME', 'https://bestofxyz.com'),
-    'host_name' => env('MIX_HOST_NAME', 'LOCAL'),
-    'timezone' => env('MIX_TIME_ZONE', 'UTC'),
+    'url' => env('APP_URL', 'http://localhost/'),
+    'path' => env('APP_PATH', '/var/www/bestofxyz/public_html/'),
+    'domain' => env('APP_DOMAIN', 'https://bestofxyz.com'),
+    'host_name' => env('APP_HOST_NAME', 'LOCAL'),
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------
@@ -40,23 +40,23 @@ return [
     | from origin. Set to CDN URL in production (e.g. "https://cdn.bestofxyz.com").
     |
     */
-    'asset_url' => env('MIX_ASSET_URL', ''),
+    'asset_url' => env('APP_ASSET_URL', ''),
 
     /*
     |--------------------------------------------------------------------------
     | Static Asset Version
     |--------------------------------------------------------------------------
     */
-    'static_version' => env('MIX_STATIC_VERSION', '202408101734'),
+    'static_version' => env('APP_STATIC_VERSION', '202408101734'),
 
     /*
     |--------------------------------------------------------------------------
     | Debugging
     |--------------------------------------------------------------------------
     */
-    'debug' => env('MIX_DEBUGGING', false),
-    'debug_bar' => env('MIX_DEBUGGING_BAR', false),
-    'debug_strict_mode' => env('MIX_DEBUGGING_STRICT_MODE', false),
+    'debug' => env('APP_DEBUG', false),
+    'debug_bar' => env('APP_DEBUG_BAR', false),
+    'debug_strict_mode' => env('APP_DEBUG_STRICT_MODE', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -64,9 +64,9 @@ return [
     |--------------------------------------------------------------------------
     */
     'encryption' => [
-        'key' => env('MIX_KEY'),
-        'first_key' => env('MIX_FKEY'),
-        'second_key' => env('MIX_SKEY'),
+        'key' => env('APP_KEY'),
+        'first_key' => env('APP_FIRST_KEY'),
+        'second_key' => env('APP_SECOND_KEY'),
         'method' => 'aes-256-cbc',
         'hash' => 'sha3-512',
     ],
@@ -84,8 +84,8 @@ return [
     */
     'strict_policy' => true,
     'session' => [
-        'driver' => env('MIX_SESSION_DRIVER', 'redis'),
-        'lifetime' => (int) env('MIX_SESSION_LIFETIME', 7200),
+        'driver' => env('SESSION_DRIVER', 'redis'),
+        'lifetime' => (int) env('SESSION_LIFETIME', 7200),
         'prefix' => 'pksess:',
     ],
 
@@ -94,12 +94,6 @@ return [
     | Security
     |--------------------------------------------------------------------------
     */
-    'master_password' => env('MIX_MSTRPASS'),
+    'master_password' => env('APP_MASTER_PASSWORD'),
 
-    /*
-    |--------------------------------------------------------------------------
-    | Rotation URL
-    |--------------------------------------------------------------------------
-    */
-    
 ];

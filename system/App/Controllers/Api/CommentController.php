@@ -80,7 +80,7 @@ class CommentController extends BaseController
             return $this->response->problem(404, 'Not Found', $e->getMessage());
         } catch (\Throwable $e) {
             return $this->response->problem(500, 'Server Error',
-                env('MIX_APP_ENV') === 'production' ? 'An unexpected error occurred while posting comment.' : 'Failed to post comment: ' . $e->getMessage()
+                config('app.env') === 'production' ? 'An unexpected error occurred while posting comment.' : 'Failed to post comment: ' . $e->getMessage()
             );
         }
     }

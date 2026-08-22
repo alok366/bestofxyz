@@ -8,10 +8,10 @@ return [
     |--------------------------------------------------------------------------
     */
     'driver' => 'mysql',
-    'host' => env('MIX_DB_HOST', 'localhost'),
-    'database' => env('MIX_DB_NAME', 'bestofxyz'),
-    'username' => env('MIX_DB_USER', 'root'),
-    'password' => env('MIX_DB_PASS', ''),
+    'host' => env('DB_HOST', 'localhost'),
+    'database' => env('DB_DATABASE', 'bestofxyz'),
+    'username' => env('DB_USERNAME', 'root'),
+    'password' => env('DB_PASSWORD', ''),
     'charset' => 'utf8mb4',
     'collation' => 'utf8mb4_unicode_ci',
     'prefix' => '',

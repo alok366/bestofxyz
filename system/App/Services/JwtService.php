@@ -19,7 +19,7 @@ class JwtService
     {
         $config = config('auth.jwt') ?? [];
         $this->secret = $config['secret'] ?? env('JWT_SECRET', 'secret');
-        if (empty($this->secret) || ($this->secret === 'secret' && env('MIX_APP_ENV') === 'production')) :
+        if (empty($this->secret) || ($this->secret === 'secret' && config('app.env') === 'production')) :
             throw new \RuntimeException('JWT secret key is not configured securely.');
         endif;
         $this->algorithm = $config['algorithm'] ?? 'HS256';

@@ -17,7 +17,7 @@ return [
         'algorithm' => 'HS256',
         'access_ttl' => (int) env('JWT_ACCESS_TTL', 900),       // 15 minutes
         'refresh_ttl' => (int) env('JWT_REFRESH_TTL', 604800),   // 7 days
-        'issuer' => env('MIX_DOMAIN_NAME', 'https://bestofxyz.com'),
+        'issuer' => env('APP_DOMAIN', 'https://bestofxyz.com'),
     ],
 
 ];

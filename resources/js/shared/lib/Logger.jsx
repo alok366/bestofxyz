@@ -10,8 +10,8 @@
  */
 
 const LOG_ENDPOINT = '/api/v4/logs';
-const IS_DEV = import.meta.env.MIX_DEBUGGING == '1' || import.meta.env.MIX_DEBUGGING === 'true';
-const API_BASE = String(import.meta.env.MIX_URL || '').replace(/\/+$/, '');
+const IS_DEV = import.meta.env.DEV || import.meta.env.VITE_DEBUG == '1' || import.meta.env.VITE_DEBUG === 'true';
+const API_BASE = String(import.meta.env.VITE_APP_URL || '').replace(/\/+$/, '');
 
 /**
  * Benign messages we never send to the backend log.

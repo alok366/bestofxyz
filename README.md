@@ -130,17 +130,17 @@ Ensure you have the following installed on your machine:
 
 2. Open `.env` and configure your database and app credentials:
    ```env
-   MIX_APP_ENV="development"
-   MIX_URL="http://localhost:8000/"
+   APP_ENV="development"
+   APP_URL="http://localhost:8000/"
 
-   MIX_DB_HOST="127.0.0.1"
-   MIX_DB_USER="root"
-   MIX_DB_PASS="secret"
-   MIX_DB_NAME="bestofxyz"
+   DB_HOST="127.0.0.1"
+   DB_USERNAME="root"
+   DB_PASSWORD="secret"
+   DB_DATABASE="bestofxyz"
 
-   MIX_REDIS_ENABLED="1"
-   MIX_CACHE_DRIVER="redis"
-   MIX_REDIS_HOST="127.0.0.1"
+   REDIS_ENABLED="1"
+   CACHE_DRIVER="redis"
+   REDIS_HOST="127.0.0.1"
    ```
 
 3. Generate a secure JWT secret key:

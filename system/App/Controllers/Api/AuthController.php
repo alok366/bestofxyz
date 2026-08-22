@@ -77,7 +77,7 @@ class AuthController extends BaseController
             return $this->response->ok($tokenPair, 201);
         } catch (\Throwable $e) {
             return $this->response->problem(500, 'Server Error',
-                env('MIX_APP_ENV') === 'production' ? 'An unexpected error occurred.' : 'Failed to register account: ' . $e->getMessage()
+                config('app.env') === 'production' ? 'An unexpected error occurred.' : 'Failed to register account: ' . $e->getMessage()
             );
         }
     }
@@ -107,7 +107,7 @@ class AuthController extends BaseController
             return $this->response->ok($tokenPair);
         } catch (\Throwable $e) {
             return $this->response->problem(500, 'Server Error',
-                env('MIX_APP_ENV') === 'production' ? 'An unexpected error occurred.' : 'Failed to generate auth tokens: ' . $e->getMessage()
+                config('app.env') === 'production' ? 'An unexpected error occurred.' : 'Failed to generate auth tokens: ' . $e->getMessage()
             );
         }
     }
@@ -133,7 +133,7 @@ class AuthController extends BaseController
             return $this->response->problem(401, 'Token Expired', 'Refresh token has expired. Please log in again.');
         } catch (\Throwable $e) {
             return $this->response->problem(401, 'Unauthorized',
-                env('MIX_APP_ENV') === 'production' ? 'Invalid or revoked refresh token.' : 'Invalid or revoked refresh token: ' . $e->getMessage()
+                config('app.env') === 'production' ? 'Invalid or revoked refresh token.' : 'Invalid or revoked refresh token: ' . $e->getMessage()
             );
         }
     }

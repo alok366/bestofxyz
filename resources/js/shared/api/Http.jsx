@@ -23,8 +23,8 @@ import Logger from '../lib/Logger';
  */
 
 const CSRF       = typeof document !== 'undefined' ? (document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '') : '';
-const API_BASE   = String(import.meta.env.MIX_URL || '').replace(/\/+$/, '') + '/api/v4';
-const AUTH_BASE  = String(import.meta.env.MIX_URL || '').replace(/\/+$/, '');
+const API_BASE   = String(import.meta.env.VITE_APP_URL || '').replace(/\/+$/, '') + '/api/v4';
+const AUTH_BASE  = String(import.meta.env.VITE_APP_URL || '').replace(/\/+$/, '');
 const DEFAULT_TIMEOUT = 15000;
 
 /**

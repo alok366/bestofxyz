@@ -60,7 +60,7 @@ abstract class BaseEloquentRepository implements ReadRepositoryInterface, WriteR
         endif;
 
         $result = $this->model->create($data);
-        if ($_ENV['MIX_DEBUGGING'] == "1") :
+        if (config('app.debug')) :
             $queryLog = Manager::connection()->getQueryLog();
             error_log(print_r($queryLog, true));
         endif;
@@ -83,7 +83,7 @@ abstract class BaseEloquentRepository implements ReadRepositoryInterface, WriteR
         endif;
         $result = $this->model->where('public_id', $id)->delete();
 
-        if ($_ENV['MIX_DEBUGGING'] == "1") :
+        if (config('app.debug')) :
             $queryLog = Manager::connection()->getQueryLog();
             error_log(print_r($queryLog, true));
         endif;

@@ -11,7 +11,7 @@ return [
     | Supported: 'redis', 'file', 'null'
     |
     */
-    'driver' => env('MIX_CACHE_DRIVER', 'redis'),
+    'driver' => env('CACHE_DRIVER', 'redis'),
 
     /*
     |--------------------------------------------------------------------------
@@ -19,10 +19,10 @@ return [
     |--------------------------------------------------------------------------
     */
     'redis' => [
-        'enabled' => env('MIX_REDIS_ENABLED', true),
-        'host' => env('MIX_REDIS_HOST', '127.0.0.1'),
-        'port' => 6379,
-        'password' => env('MIX_REDIS_PASSWORD'),
+        'enabled' => env('REDIS_ENABLED', true),
+        'host' => env('REDIS_HOST', '127.0.0.1'),
+        'port' => (int) env('REDIS_PORT', 6379),
+        'password' => env('REDIS_PASSWORD'),
         'prefix' => 'app',
     ],
 

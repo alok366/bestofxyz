@@ -40,27 +40,27 @@ cp .env.sample .env
 
 Open `.env` and set your local environment settings:
 ```ini
-MIX_APP_ENV="development"
-MIX_DEBUGGING="1"
-MIX_DEBUGGING_STRICT_MODE="1"
+APP_ENV="development"
+APP_DEBUG="1"
+APP_DEBUG_STRICT_MODE="1"
 
-MIX_URL="http://localhost:8000/"
-MIX_PATH="/var/www/bestofxyz/public_html/"
+APP_URL="http://localhost:8000/"
+APP_PATH="/var/www/bestofxyz/public_html/"
 
 # Database Credentials
-MIX_DB_HOST="127.0.0.1"
-MIX_DB_USER="your_mysql_user"
-MIX_DB_PASS="your_mysql_password"
-MIX_DB_NAME="bestofxyz"
+DB_HOST="127.0.0.1"
+DB_USERNAME="your_mysql_user"
+DB_PASSWORD="your_mysql_password"
+DB_DATABASE="bestofxyz"
 
 # Redis
-MIX_REDIS_ENABLED="1"
-MIX_CACHE_DRIVER="redis"
-MIX_REDIS_HOST="127.0.0.1"
-MIX_REDIS_PASSWORD=null
+REDIS_ENABLED="1"
+CACHE_DRIVER="redis"
+REDIS_HOST="127.0.0.1"
+REDIS_PASSWORD=null
 
 # Session and App Encryption
-MIX_KEY="base64:your_32_character_app_key"
+APP_KEY="your_32_character_app_key"
 ```
 
 Generate the JWT authentication secret:

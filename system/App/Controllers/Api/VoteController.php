@@ -49,7 +49,7 @@ class VoteController extends BaseController
             return $this->response->problem(404, 'Not Found', $e->getMessage());
         } catch (\Throwable $e) {
             return $this->response->problem(500, 'Server Error',
-                env('MIX_APP_ENV') === 'production' ? 'An unexpected error occurred while processing vote.' : 'Failed to process vote: ' . $e->getMessage()
+                config('app.env') === 'production' ? 'An unexpected error occurred while processing vote.' : 'Failed to process vote: ' . $e->getMessage()
             );
         }
     }
@@ -74,7 +74,7 @@ class VoteController extends BaseController
             return $this->response->problem(404, 'Not Found', $e->getMessage());
         } catch (\Throwable $e) {
             return $this->response->problem(500, 'Server Error',
-                env('MIX_APP_ENV') === 'production' ? 'An unexpected error occurred while removing vote.' : 'Failed to remove vote: ' . $e->getMessage()
+                config('app.env') === 'production' ? 'An unexpected error occurred while removing vote.' : 'Failed to remove vote: ' . $e->getMessage()
             );
         }
     }

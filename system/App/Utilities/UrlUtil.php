@@ -12,7 +12,7 @@ class UrlUtil
      */
     public static function baseUrl(?string $relativePath = null): string
     {
-        return $_ENV['MIX_URL'] . $relativePath;
+        return config('app.url', 'http://localhost/') . $relativePath;
     }
 
     /**
@@ -23,7 +23,7 @@ class UrlUtil
      */
     public static function basePath(?string $relativePath = null): string
     {
-        return $_ENV['MIX_PATH'] . $relativePath;
+        return config('app.path', '/var/www/bestofxyz/public_html/') . $relativePath;
     }
 
 }

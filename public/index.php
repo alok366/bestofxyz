@@ -20,7 +20,7 @@ try {
     if (isset($request) && str_starts_with($request->getPathInfo(), '/api/')) {
         header('HTTP/1.1 500 Internal Server Error');
         header('Content-Type: application/problem+json');
-        $detail = (env('MIX_APP_ENV') === 'production' && !config('app.debug'))
+        $detail = (config('app.env') === 'production' && !config('app.debug'))
             ? 'An unexpected server error occurred.'
             : $e->getMessage();
         echo json_encode([
