@@ -11,12 +11,6 @@ use Framework\Http\Middleware\VoteRateLimitMiddleware;
 
 global $container, $events;
 
-
-$container->singleton('auth', function() {
-    return new \App\Services\AuthService();
-});
-
-
 $router = new Router($events, $container);
 // Register CORS middleware
 $router->aliasMiddleware('cors', CorsMiddleware::class);

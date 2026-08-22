@@ -15,3 +15,10 @@ date_default_timezone_set('UTC');
 global $container, $events;
 $container = new Container();
 $events = new Dispatcher($container);
+
+// Register service providers
+$providers = require __DIR__ . '/providers.php';
+foreach ($providers as $providerClass) {
+    (new $providerClass())->register($container);
+}
+
