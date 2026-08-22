@@ -1,0 +1,507 @@
+openapi: 3.0.3
+info:
+  title: BestOfXYZ REST API
+  description: |
+    Official API specification for the BestOfXYZ curated directory and resource platform.
+    Features public discovery endpoints, authenticated contribution & voting endpoints, and administrative management.
+  version: 4.0.0
+  contact:
+    name: BestOfXYZ API Support
+    email: api@bestofxyz.com
+
+servers:
+  - url: /
+    description: Current Environment Server
+
+paths:
+  # ==========================================
+  # Public Read Endpoints
+  # ==========================================
+  /api/categories:
+    get:
+      summary: List all categories
+      description: Retrieve a paginated list of categories with resource counts.
+      tags:
+        - Categories
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+
+  /api/categories/{slug}:
+    get:
+      summary: Get category by slug
+      description: Retrieve category details and its ranked resources.
+      tags:
+        - Categories
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Category details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/categories/{catSlug}/resources/{resSlug}:
+    get:
+      summary: Get resource by category and slug
+      description: Retrieve specific resource details within a category.
+      tags:
+        - Resources
+      parameters:
+        - name: catSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: resSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Resource details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/resources/{slug}:
+    get:
+      summary: Get resource by slug
+      tags:
+        - Resources
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Resource details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/resources/{id}/comments:
+    get:
+      summary: List comments for a resource
+      tags:
+        - Comments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+
+  /api/tags:
+    get:
+      summary: List all resource tags
+      tags:
+        - Tags
+      responses:
+        '200':
+          description: List of tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+
+  # ==========================================
+  # Protected User Endpoints (JWT Required)
+  # ==========================================
+  /api/resources:
+    post:
+      summary: Submit a new resource
+      tags:
+        - Resources
+      security:
+        - BearerAuth: []
+        - CookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - url
+                - category_id
+              properties:
+                title:
+                  type: string
+                url:
+                  type: string
+                  format: uri
+                description:
+                  type: string
+                category_id:
+                  type: integer
+                tag_ids:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '201':
+          description: Resource created / submitted for review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/resources/{id}/vote:
+    post:
+      summary: Upvote a resource
+      tags:
+        - Votes
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Vote recorded
+        '429':
+          description: Rate limit exceeded
+    delete:
+      summary: Remove upvote from a resource
+      tags:
+        - Votes
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Vote removed
+
+  /api/resources/{id}/comments:
+    post:
+      summary: Post a comment on a resource
+      tags:
+        - Comments
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - body
+              properties:
+                body:
+                  type: string
+      responses:
+        '201':
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+
+  # ==========================================
+  # Authentication Endpoints
+  # ==========================================
+  /api/auth/register:
+    post:
+      summary: Register a new user account
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/auth/login:
+    post:
+      summary: Authenticate user & retrieve access token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+
+  /api/auth/refresh:
+    post:
+      summary: Refresh JWT token
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: New token issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /api/auth/logout:
+    post:
+      summary: Log out & revoke active tokens
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: Logged out successfully
+
+  # ==========================================
+  # Admin API Endpoints
+  # ==========================================
+  /api/v4/admin/stats/dashboard-widgets:
+    get:
+      summary: Get admin dashboard widget stats
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Dashboard stats
+        '403':
+          description: Admin privileges required
+
+  /api/v4/admin/status:
+    get:
+      summary: Get system health and status
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: System status info
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: PHPSESSID
+
+  responses:
+    NotFound:
+      description: The requested entity was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    ValidationError:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: AI Tools
+        slug:
+          type: string
+          example: ai-tools
+        description:
+          type: string
+          example: Top artificial intelligence tools and assistants
+        resource_count:
+          type: integer
+          example: 48
+
+    Resource:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 101
+        title:
+          type: string
+          example: ChatGPT
+        slug:
+          type: string
+          example: chatgpt
+        url:
+          type: string
+          example: https://chatgpt.com
+        description:
+          type: string
+          example: Conversational AI assistant by OpenAI
+        category_id:
+          type: integer
+          example: 1
+        votes_count:
+          type: integer
+          example: 1420
+        created_at:
+          type: string
+          format: date-time
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        resource_id:
+          type: integer
+        user_id:
+          type: integer
+        body:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT Access Token
+        expires_in:
+          type: integer
+          example: 3600
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            email:
+              type: string
+
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          example: https://api.bestofxyz.com/errors/validation
+        title:
+          type: string
+          example: Validation Error
+        status:
+          type: integer
+          example: 422
+        detail:
+          type: string
+          example: The title field is required.
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string

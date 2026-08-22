@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BestOfXYZ Developer & Documentation Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    header p {
+      color: var(--text-muted);
+      font-size: 1.15rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background-color: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      margin-bottom: 16px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    }
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+    .card h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+    .card a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--primary);
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background-color 0.2s ease;
+    }
+    .card a.btn:hover {
+      background-color: var(--primary-hover);
+    }
+    .card a.link-sec {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: inline-block;
+      margin-top: 8px;
+    }
+    .card a.link-sec:hover {
+      text-decoration: underline;
+    }
+    .quick-links {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 32px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .quick-links span {
+      font-weight: 600;
+      color: #fff;
+    }
+    .quick-links div {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .quick-links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    .quick-links a:hover {
+      text-decoration: underline;
+    }
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">Documentation & Engineering Hub</div>
+      <h1>BestOfXYZ Developer Portal</h1>
+      <p>Architecture specifications, OpenAPI reference, setup runbooks, and coding standards for the BestOfXYZ platform.</p>
+    </header>
+
+    <div class="grid">
+      <!-- Card 1: API Reference -->
+      <div class="card">
+        <div>
+          <div class="card-icon">⚡</div>
+          <h2>Interactive API Docs</h2>
+          <p>Explore all public, authenticated, and administrative endpoints with interactive Swagger UI and request schemas.</p>
+        </div>
+        <div>
+          <a href="api/index.html" class="btn">Open Swagger UI →</a>
+          <br>
+          <a href="api/openapi.yaml" class="link-sec">Download openapi.yaml</a>
+        </div>
+      </div>
+
+      <!-- Card 2: Architecture & ADRs -->
+      <div class="card">
+        <div>
+          <div class="card-icon">🏛️</div>
+          <h2>Architecture & ADRs</h2>
+          <p>Deep-dive into the custom Illuminate-based PHP framework, Feature-Sliced Design React frontend, and key ADR records.</p>
+        </div>
+        <div>
+          <a href="architecture/overview.md" class="btn">Architecture Overview →</a>
+          <br>
+          <a href="architecture/adr/0001-custom-php-framework-architecture.md" class="link-sec">View ADR Records</a>
+        </div>
+      </div>
+
+      <!-- Card 3: Developer Setup -->
+      <div class="card">
+        <div>
+          <div class="card-icon">🛠️</div>
+          <h2>Developer Setup Guide</h2>
+          <p>Step-by-step instructions for local environment configuration, Composer/NPM installation, and database seeding.</p>
+        </div>
+        <div>
+          <a href="developer/setup-guide.md" class="btn">View Setup Guide →</a>
+        </div>
+      </div>
+
+      <!-- Card 4: Artisan CLI Reference -->
+      <div class="card">
+        <div>
+          <div class="card-icon">💻</div>
+          <h2>Artisan CLI Reference</h2>
+          <p>Comprehensive guide to all 19 custom console commands including code generators, migrations, queues, and test runners.</p>
+        </div>
+        <div>
+          <a href="developer/cli-reference.md" class="btn">CLI Reference →</a>
+        </div>
+      </div>
+
+      <!-- Card 5: Workers & Queues -->
+      <div class="card">
+        <div>
+          <div class="card-icon">🔄</div>
+          <h2>Workers & Cronjobs</h2>
+          <p>Guide for background daemon workers, Supervisor configuration, failed job management, and cron schedules.</p>
+        </div>
+        <div>
+          <a href="developer/background-jobs-and-workers.md" class="btn">Workers & Crons Guide →</a>
+        </div>
+      </div>
+
+      <!-- Card 6: Contribution & Standards -->
+      <div class="card">
+        <div>
+          <div class="card-icon">📋</div>
+          <h2>Contributing & QA</h2>
+          <p>Branching guidelines, Conventional Commits, layer validation checks, and Pull Request submission requirements.</p>
+        </div>
+        <div>
+          <a href="../CONTRIBUTING.md" class="btn">Read Contributing Guide →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-links">
+      <span>Quick Navigation:</span>
+      <div>
+        <a href="../README.md">Root README</a>
+        <a href="../instructions/SKILL.md">Architecture Skill</a>
+        <a href="../instructions/references/backend.md">Backend Reference</a>
+        <a href="../instructions/references/frontend.md">Frontend Reference</a>
+      </div>
+    </div>
+
+    <footer>
+      BestOfXYZ Engineering &bull; Custom PHP Framework + React 19 / Vite &bull; Internal Documentation
+    </footer>
+  </div>
+</body>
+</html>
