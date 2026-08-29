@@ -5,6 +5,7 @@ namespace App\Controllers\Api;
 use App\Controllers\BaseController;
 use App\Services\UserService;
 use App\Services\JwtService;
+use App\Transformers\UserTransformer;
 use App\Models\User;
 use Illuminate\Http\Response;
 
@@ -74,7 +75,9 @@ class AuthController extends BaseController
             $user = $this->userService->register($username, $email, $password);
             $tokenPair = $this->jwtService->generateTokenPair((int) $user->id, $user->role ?? 'user');
 
-            return $this->response->ok($tokenPair, 201);
+            return $this->response->ok(array_merge($tokenPair, [
+                'user' => UserTransformer::toProfile($user),
+            ]), 201);
         } catch (\Throwable $e) {
             return $this->response->problem(500, 'Server Error',
                 config('app.env') === 'production' ? 'An unexpected error occurred.' : 'Failed to register account: ' . $e->getMessage()
@@ -104,7 +107,9 @@ class AuthController extends BaseController
 
         try {
             $tokenPair = $this->jwtService->generateTokenPair((int) $user->id, $user->role ?? 'user');
-            return $this->response->ok($tokenPair);
+            return $this->response->ok(array_merge($tokenPair, [
+                'user' => UserTransformer::toProfile($user),
+            ]));
         } catch (\Throwable $e) {
             return $this->response->problem(500, 'Server Error',
                 config('app.env') === 'production' ? 'An unexpected error occurred.' : 'Failed to generate auth tokens: ' . $e->getMessage()
@@ -160,5 +165,22 @@ class AuthController extends BaseController
         endif;
 
         return $this->response->ok(['message' => 'Logged out successfully.']);
+    }
+
+    /**
+     * GET /api/auth/me
+     *
+     * Return the authenticated user's profile.
+     * Requires auth.jwt middleware — the middleware resolves the user
+     * and stores it in the request's auth_user attribute.
+     */
+    public function me(): Response
+    {
+        $user = $this->getAuthenticatedUser();
+        if (!$user) :
+            return $this->response->problem(401, 'Unauthorized', 'Invalid or expired token.');
+        endif;
+
+        return $this->response->ok(UserTransformer::toProfile($user));
     }
 }

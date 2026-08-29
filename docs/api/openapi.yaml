@@ -265,12 +265,15 @@ paths:
             schema:
               type: object
               required:
-                - name
+                - username
                 - email
                 - password
               properties:
-                name:
+                username:
                   type: string
+                  minLength: 3
+                  maxLength: 30
+                  pattern: '^[a-zA-Z0-9_]+$'
                 email:
                   type: string
                   format: email
@@ -339,6 +342,31 @@ paths:
       responses:
         '200':
           description: Logged out successfully
+
+  /api/auth/me:
+    get:
+      summary: Get current authenticated user profile
+      description: |
+        Returns the profile of the currently authenticated user.
+        Used by the frontend for auth state hydration on page reload.
+        Requires a valid JWT access token.
+      tags:
+        - Authentication
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Authenticated user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          description: Invalid or expired token
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
 
   # ==========================================
   # Admin API Endpoints
@@ -468,28 +496,50 @@ components:
     AuthResponse:
       type: object
       properties:
-        token:
+        access_token:
           type: string
-          description: JWT Access Token
+          description: JWT access token
+        refresh_token:
+          type: string
+          description: JWT refresh token for obtaining new access tokens
+        token_type:
+          type: string
+          example: Bearer
         expires_in:
           type: integer
-          example: 3600
+          description: Access token TTL in seconds
+          example: 900
         user:
-          type: object
-          properties:
-            id:
-              type: integer
-            name:
-              type: string
-            email:
-              type: string
+          $ref: '#/components/schemas/UserProfile'
+
+    UserProfile:
+      type: object
+      description: Safe, client-facing user profile (never includes password_hash)
+      properties:
+        id:
+          type: integer
+          example: 42
+        username:
+          type: string
+          example: alok
+        email:
+          type: string
+          format: email
+          example: alok@example.com
+        role:
+          type: string
+          enum: [user, moderator, admin]
+          example: user
+        created_at:
+          type: string
+          format: date-time
 
     ProblemDetails:
       type: object
       properties:
         type:
           type: string
-          example: https://api.bestofxyz.com/errors/validation
+          example: about:blank
         title:
           type: string
           example: Validation Error

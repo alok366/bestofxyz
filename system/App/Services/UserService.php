@@ -30,11 +30,13 @@ class UserService extends BaseService
     public function authenticate(string $email, string $password): ?User
     {
         $user = $this->userRepo->findByEmail($email);
-        if (!$user) :
-            return null;
-        endif;
 
-        if (!password_verify($password, $user->password_hash)) :
+        // Always run password_verify even when the user doesn't exist.
+        // This prevents timing-based email enumeration attacks — bcrypt
+        // takes constant time regardless of whether we have a real hash.
+        $hash = $user->password_hash ?? '$2y$10$dummyhashtopreventtimingattackenumeration00000000000';
+
+        if (!password_verify($password, $hash) || !$user) :
             return null;
         endif;
 

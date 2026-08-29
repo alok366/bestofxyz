@@ -15,6 +15,7 @@ $router->group(['prefix' => 'api', 'middleware' => ['cors']], function ($router)
 
     // ── Protected write endpoints (JWT auth required) ──────────────
     $router->group(['middleware' => ['start.session', 'auth.jwt']], function ($router) {
+        $router->get('/auth/me',                  'App\Controllers\Api\AuthController@me');
         $router->post('/resources',               'App\Controllers\Api\ResourceController@store');
         $router->post('/resources/{id}/vote',     ['middleware' => ['vote.rate'], 'uses' => 'App\Controllers\Api\VoteController@store']);
         $router->delete('/resources/{id}/vote',   'App\Controllers\Api\VoteController@destroy');
