@@ -2,9 +2,11 @@ import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import { THEME_PREFERENCES } from '@shared/config/theme';
 import { themeReducer, themeListenerMiddleware } from '@shared/lib/theme';
+import { authReducer } from '@shared/lib/auth';
 import { UserDropdown } from './UserDropdown';
 
 describe('UserDropdown Component', () => {
@@ -19,6 +21,7 @@ describe('UserDropdown Component', () => {
 
     store = configureStore({
       reducer: {
+        auth: authReducer,
         theme: themeReducer,
       },
       middleware: (getDefaultMiddleware) =>
@@ -41,7 +44,9 @@ describe('UserDropdown Component', () => {
     act(() => {
       root.render(
         <Provider store={store}>
-          <UserDropdown initials="AB" />
+          <MemoryRouter>
+            <UserDropdown initials="AB" />
+          </MemoryRouter>
         </Provider>
       );
     });
@@ -51,11 +56,36 @@ describe('UserDropdown Component', () => {
     expect(button.textContent).toContain('AB');
   });
 
+  it('shows Login and Sign Up links when unauthenticated', () => {
+    act(() => {
+      root.render(
+        <Provider store={store}>
+          <MemoryRouter>
+            <UserDropdown initials="U" />
+          </MemoryRouter>
+        </Provider>
+      );
+    });
+
+    const triggerBtn = container.querySelector('button[aria-label="User menu"]');
+
+    act(() => {
+      triggerBtn.click();
+    });
+
+    const links = container.querySelectorAll('a[role="menuitem"]');
+    const linkTexts = Array.from(links).map((l) => l.textContent.trim());
+    expect(linkTexts).toContain('Login');
+    expect(linkTexts).toContain('Sign Up');
+  });
+
   it('toggles theme submenu on click and selects a theme option', () => {
     act(() => {
       root.render(
         <Provider store={store}>
-          <UserDropdown initials="U" />
+          <MemoryRouter>
+            <UserDropdown initials="U" />
+          </MemoryRouter>
         </Provider>
       );
     });

@@ -1,12 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Avatar } from '@shared/ui';
 import { useTheme, THEME_PREFERENCES } from '@shared/lib/theme';
+import { useAuth } from '@shared/lib/auth';
 import styles from './UserDropdown.module.less';
 
-export const UserDropdown = ({ initials = 'U' }) => {
+export const UserDropdown = ({ initials: initialsProp }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   const { preference: selectedTheme, setTheme } = useTheme();
+  const { user, isAuthenticated, initials: authInitials, logout } = useAuth();
+
+  // Use auth-derived initials when available, fall back to prop
+  const initials = isAuthenticated ? authInitials : (initialsProp || 'U');
 
   const containerRef = useRef(null);
   const triggerRef = useRef(null);
@@ -53,6 +59,11 @@ export const UserDropdown = ({ initials = 'U' }) => {
     setTheme(theme);
   };
 
+  const handleLogout = () => {
+    setIsOpen(false);
+    logout();
+  };
+
   return (
     <div
       ref={containerRef}
@@ -73,33 +84,40 @@ export const UserDropdown = ({ initials = 'U' }) => {
 
       {isOpen && (
         <ul className={styles.menu} role="menu" aria-label="User dropdown menu">
-          <li className={styles.menuItem} role="none">
-            <a
-              href="#login"
-              className={styles.menuItemLink}
-              role="menuitem"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsOpen(false);
-              }}
-            >
-              Login
-            </a>
-          </li>
+          {isAuthenticated ? (
+            <>
+              <li className={styles.menuItem} role="none">
+                <span className={styles.menuItemLabel}>
+                  {user?.username || 'User'}
+                </span>
+              </li>
+              <li className={styles.menuDivider} role="separator" />
+            </>
+          ) : (
+            <>
+              <li className={styles.menuItem} role="none">
+                <Link
+                  to="/login"
+                  className={styles.menuItemLink}
+                  role="menuitem"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Login
+                </Link>
+              </li>
 
-          <li className={styles.menuItem} role="none">
-            <a
-              href="#signup"
-              className={styles.menuItemLink}
-              role="menuitem"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsOpen(false);
-              }}
-            >
-              Sign Up
-            </a>
-          </li>
+              <li className={styles.menuItem} role="none">
+                <Link
+                  to="/register"
+                  className={styles.menuItemLink}
+                  role="menuitem"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </li>
+            </>
+          )}
 
           <li className={styles.menuItem} role="none">
             <button
@@ -185,8 +203,25 @@ export const UserDropdown = ({ initials = 'U' }) => {
               </ul>
             )}
           </li>
+
+          {isAuthenticated && (
+            <>
+              <li className={styles.menuDivider} role="separator" />
+              <li className={styles.menuItem} role="none">
+                <button
+                  type="button"
+                  className={styles.menuItemButton}
+                  role="menuitem"
+                  onClick={handleLogout}
+                >
+                  <span className={styles.itemLabel}>Log out</span>
+                </button>
+              </li>
+            </>
+          )}
         </ul>
       )}
     </div>
   );
 };
+
