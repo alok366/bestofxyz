@@ -8,6 +8,7 @@ import {
   Route,
   useLocation,
 } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { Http } from '@shared/api';
 import { Layout } from '@widgets/layout';
 import { Header } from '@widgets/header';
@@ -19,7 +20,10 @@ import { CategoryPage } from '@pages/category';
 import { ResourceDetailPage } from '@pages/resource';
 import { SubmitResourcePage } from '@pages/submit';
 import { PendingCategoryPage } from '@pages/pending';
+import { LoginPage } from '@pages/login';
+import { RegisterPage } from '@pages/register';
 import { ThemeSync } from '@shared/lib/theme';
+import { hydrateAuth, RequireAuth } from '@shared/lib/auth';
 import { StoreProvider } from './providers/StoreProvider';
 
 const NotFound = () => (
@@ -39,8 +43,15 @@ const NotFound = () => (
 const engineForPath = () => 'broadcasts';
 
 function RouterInner() {
+  const dispatch = useDispatch();
   const location = useLocation();
   const [currentPath, setCurrentPath] = useState(location.pathname);
+
+  // Hydrate auth state on app mount — checks localStorage for tokens
+  // and fetches the user profile from GET /api/auth/me if present.
+  useEffect(() => {
+    dispatch(hydrateAuth());
+  }, [dispatch]);
 
   useEffect(() => {
     Http.setMode(engineForPath());
@@ -57,12 +68,14 @@ function RouterInner() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/dashboard" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/categories" element={<AllCategoriesPage />} />
         <Route path="/categories/:slug" element={<CategoryPage />} />
         <Route path="/categories/:catSlug/resources/:resSlug" element={<ResourceDetailPage />} />
         <Route path="/resource/:slug" element={<ResourceDetailPage />} />
         <Route path="/resources/:slug" element={<ResourceDetailPage />} />
-        <Route path="/submit" element={<SubmitResourcePage />} />
+        <Route path="/submit" element={<RequireAuth><SubmitResourcePage /></RequireAuth>} />
         <Route path="/pending/:slug" element={<PendingCategoryPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

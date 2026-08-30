@@ -4,6 +4,7 @@
  */
 
 export { useAuth } from './useAuth';
+export { RequireAuth } from './ui/RequireAuth';
 export {
   authSlice,
   default as authReducer,
