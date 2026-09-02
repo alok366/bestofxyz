@@ -57,7 +57,7 @@ class ApiService
 
         // Remove expired entries (sliding window)
         $windowStart = $now - $window;
-        $redis->zRemRangeByScore($key, 0, $windowStart);
+        $redis->zRemRangeByScore($key, '-inf', (string) $windowStart);
 
         // Count current requests in window
         $current = $redis->zCard($key);
