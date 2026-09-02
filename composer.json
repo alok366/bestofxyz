@@ -25,24 +25,13 @@
             "cweagans/composer-patches": true
         }
     },
-    "extra": {
-        "patches": {
-        "getresponse/sdk-php-client": {
-            "Fix PHP 8.2 nullable param deprecation": "patches/fix-nullable-logger-param.patch"
-        }
-        }
-    },    
     "autoload": {
         "files": ["framework/helpers.php"],
         "psr-4": {
-            "": ["system/Services/"],
-
             "Framework\\": "framework/",
-
             "App\\": "system/App/",
             "Database\\Seeders\\": "database/seeders/",
-
             "Utils\\": "system/App/Utilities/"
         }
-    }          
+    }
 }

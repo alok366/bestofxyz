@@ -47,10 +47,9 @@ class ChecksCommand extends BaseCommand
     --file=path   Check a single file instead of all directories
 
   Description:
-    Runs PHPCS code style checks against system/App/, system/Media/,
-    system/Mailer/, and system/EmailMarketing/. Without a scope argument,
-    runs both App and PSR-12 rulesets sequentially.
-
+    Runs PHPCS code style checks against system/App/.
+    Without a scope argument, runs both App and PSR-12 rulesets sequentially.
+ 
   Examples:
     php artisan checks                      Run all code style checks (App + PSR)
     php artisan checks app                  Run App custom sniffs only
@@ -82,7 +81,13 @@ HELP;
 
         $options = $this->parseOptions($args);
         $file = $this->option($options, 'file');
-        $targets = $file ?: 'system/App/ system/Media/ system/Mailer/ system/EmailMarketing/';
+        if ($file) {
+            $targets = $file;
+        } else {
+            $defaultDirs = ['system/App/'];
+            $existingDirs = array_filter($defaultDirs, fn(string $dir): bool => is_dir($basePath . '/' . $dir));
+            $targets = implode(' ', $existingDirs);
+        }
 
         // First non-option arg is the scope
         $scope = null;

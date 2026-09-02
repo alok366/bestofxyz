@@ -38,7 +38,7 @@ class MakeRepositoryCommand extends BaseCommand
     php artisan make:repository <Name>
 
   Arguments:
-    Name          The entity name in PascalCase (e.g. CouponReward)
+    Name          The entity name in PascalCase (e.g. Resource)
                   Smart/Eloquent prefixes and "Repository" suffix added automatically.
 
   Description:
@@ -50,7 +50,7 @@ class MakeRepositoryCommand extends BaseCommand
     The SmartRepository delegates to the EloquentRepository.
 
   Examples:
-    php artisan make:repository CouponReward
+    php artisan make:repository Resource
 HELP;
     }
 

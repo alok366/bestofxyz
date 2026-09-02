@@ -79,34 +79,7 @@ php artisan storage:link
 
 ---
 
-## 3. Background Workers & Queues
-
-### `worker`
-Starts a background queue worker daemon to process queued jobs.
-```bash
-# Run worker
-php artisan worker
-
-# Run worker with specified queue
-php artisan worker --queue=emails
-```
-
-### `queue:failed`
-Lists all failed queue jobs with error traces and failure timestamps.
-```bash
-php artisan queue:failed
-```
-
-### `queue:retry <id|all>`
-Retries failed jobs by job ID or all failed jobs.
-```bash
-php artisan queue:retry 42
-php artisan queue:retry all
-```
-
----
-
-## 4. Testing & Code Quality
+## 3. Testing & Code Quality
 
 ### `checks`
 Runs architectural integrity checks, verifying that controllers, services, and transformers follow repository layer boundaries.

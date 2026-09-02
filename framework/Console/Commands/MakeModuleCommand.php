@@ -38,7 +38,7 @@ class MakeModuleCommand extends BaseCommand
     php artisan make:module <Name> [options]
 
   Arguments:
-    Name          The entity name in PascalCase (e.g. CouponReward)
+    Name          The entity name in PascalCase (e.g. Resource)
 
   Options:
     --table=name  Specify the database table name for the model
@@ -54,9 +54,9 @@ class MakeModuleCommand extends BaseCommand
       - Controller         system/App/Controllers/<Name>Controller.php
 
   Examples:
-    php artisan make:module CouponReward
-    php artisan make:module CouponReward --table=coupon_rewards
-    php artisan make:module CouponReward --skip=controller,transformer
+    php artisan make:module Resource
+    php artisan make:module Resource --table=resources
+    php artisan make:module Resource --skip=controller,transformer
 HELP;
     }
 

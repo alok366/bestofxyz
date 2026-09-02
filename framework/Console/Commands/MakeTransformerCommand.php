@@ -38,7 +38,7 @@ class MakeTransformerCommand extends BaseCommand
     php artisan make:transformer <Name>
 
   Arguments:
-    Name          The entity name in PascalCase (e.g. CouponReward)
+    Name          The entity name in PascalCase (e.g. Resource)
                   "Transformer" suffix is added automatically.
 
   Description:
@@ -46,7 +46,7 @@ class MakeTransformerCommand extends BaseCommand
     toResponse() and toDatabaseSchema() methods (bidirectional pattern).
 
   Examples:
-    php artisan make:transformer CouponReward    Creates CouponRewardTransformer.php
+    php artisan make:transformer Resource    Creates ResourceTransformer.php
 HELP;
     }
 

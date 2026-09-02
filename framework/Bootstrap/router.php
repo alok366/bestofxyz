@@ -2,8 +2,6 @@
 
 use Illuminate\Routing\Router;
 use Framework\Http\Middleware\CorsMiddleware;
-use Framework\Http\Middleware\AuthenticateAdminMiddleware;
-use Framework\Http\Middleware\ApiMiddleware;
 use Framework\Http\Middleware\StartSessionMiddleware;
 use Framework\Http\Middleware\LoginThrottleMiddleware;
 use Framework\Http\Middleware\JwtAuthMiddleware;
@@ -14,8 +12,6 @@ global $container, $events;
 $router = new Router($events, $container);
 // Register CORS middleware
 $router->aliasMiddleware('cors', CorsMiddleware::class);
-$router->aliasMiddleware('auth.admin', AuthenticateAdminMiddleware::class);
-$router->aliasMiddleware('developer.api', ApiMiddleware::class);
 $router->aliasMiddleware('start.session', StartSessionMiddleware::class);
 $router->aliasMiddleware('auth.throttle', LoginThrottleMiddleware::class);
 $router->aliasMiddleware('auth.jwt', JwtAuthMiddleware::class);

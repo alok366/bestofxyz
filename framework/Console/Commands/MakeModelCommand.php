@@ -38,7 +38,7 @@ class MakeModelCommand extends BaseCommand
     php artisan make:model <Name> [options]
 
   Arguments:
-    Name          The model name in PascalCase (e.g. CouponReward)
+    Name          The model name in PascalCase (e.g. Resource)
 
   Options:
     --table=name  Specify the database table name (default: snake_case plural)
@@ -47,8 +47,8 @@ class MakeModelCommand extends BaseCommand
     Creates a new Eloquent model in system/App/Models/.
 
   Examples:
-    php artisan make:model CouponReward
-    php artisan make:model CouponReward --table=coupon_rewards
+    php artisan make:model Resource
+    php artisan make:model Resource --table=resources
 HELP;
     }
 

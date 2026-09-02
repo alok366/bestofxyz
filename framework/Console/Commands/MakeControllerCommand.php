@@ -38,7 +38,7 @@ class MakeControllerCommand extends BaseCommand
     php artisan make:controller <Name>
 
   Arguments:
-    Name          The entity name in PascalCase (e.g. CouponReward)
+    Name          The entity name in PascalCase (e.g. Resource)
                   "Controller" suffix is added automatically.
 
   Description:
@@ -46,7 +46,7 @@ class MakeControllerCommand extends BaseCommand
     matching service injected via constructor.
 
   Examples:
-    php artisan make:controller CouponReward     Creates CouponRewardController.php
+    php artisan make:controller Resource     Creates ResourceController.php
 HELP;
     }
 

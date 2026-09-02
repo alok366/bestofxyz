@@ -38,7 +38,7 @@ class MakeServiceCommand extends BaseCommand
     php artisan make:service <Name>
 
   Arguments:
-    Name          The entity name in PascalCase (e.g. CouponReward)
+    Name          The entity name in PascalCase (e.g. Resource)
                   "Service" suffix is added automatically.
 
   Description:
@@ -46,7 +46,7 @@ class MakeServiceCommand extends BaseCommand
     wired to the matching SmartRepository.
 
   Examples:
-    php artisan make:service CouponReward       Creates CouponRewardService.php
+    php artisan make:service Resource       Creates ResourceService.php
 HELP;
     }
 

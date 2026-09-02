@@ -1,76 +1,27 @@
-# Background Jobs, Queues & Scheduled Workers
+# Background Tasks & Scheduled Cronjobs
 
-BestOfXYZ handles asynchronous work through two distinct mechanisms:
-1. **Background Queue Workers**: Real-time asynchronous jobs (emails, webhooks, analytics dispatch).
-2. **Scheduled Cronjobs**: Batch periodic execution (daily stats calculation, rank snapshotting).
-
----
-
-## 1. Background Queue System
-
-### 1.1 Architecture
-The queue layer is located in `system/App/Workers/`. Workers consume jobs pushed to Redis or database queues.
-
-```
-[Application Request]
-       │
-       ▼ (dispatch job)
-  [Redis / Database Queue]
-       │
-       ▼ (poll & execute)
-[Worker Daemon: php artisan worker]
-```
-
-### 1.2 Starting Workers
-In local development, you can start a worker directly:
-```bash
-php artisan worker
-```
-
-In production, run workers under a process supervisor such as **Supervisor** or **Systemd**:
-
-```ini
-[program:bestofxyz-worker]
-process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/bestofxyz/public_html/artisan worker
-autostart=true
-autorestart=true
-user=www-data
-numprocs=2
-redirect_stderr=true
-stdout_logfile=/var/www/bestofxyz/public_html/logs/worker.log
-```
-
-### 1.3 Managing Failed Jobs
-If a job throws an unhandled exception, it is pushed to the `failed_jobs` table:
-```bash
-# List all failed jobs
-php artisan queue:failed
-
-# Retry specific job ID
-php artisan queue:retry 12
-
-# Retry all failed jobs
-php artisan queue:retry all
-```
+BestOfXYZ handles asynchronous and batch processing through periodic scheduled cron tasks located in `workers/cron/`.
 
 ---
 
 ## 2. Scheduled Cronjobs
 
-Scheduled jobs live in the [`cronjobs/`](../../cronjobs) directory.
+Scheduled jobs live in the `workers/cron/` directory.
 
 ### 2.1 Available Cron Scripts
-- `cronjobs/EmailQueueProcessor.php`: Flushes outgoing batched notification emails.
-- `cronjobs/RefreshDailyCustomerLoginStats.php`: Aggregates customer activity and daily engagement metrics.
+- `workers/cron/recompute-hot-scores.php`: Recalculates `hot_score` based on net votes and submission age.
+- `workers/cron/snapshot-ranks.php`: Takes daily snapshots of category resource rankings.
+- `workers/cron/reconcile-scores.php`: Reconciles cached score sums with vote tables.
+- `workers/cron/check-pending-promotions.php`: Promotes pending resources once score thresholds are met.
+- `workers/cron/prune-snapshots.php`: Prunes aged historical snapshot entries.
 
 ### 2.2 Crontab Configuration
 Add the following entries to your system crontab (`crontab -e`):
 
 ```cron
-# Process email queues every minute
-* * * * * php /var/www/bestofxyz/public_html/cronjobs/EmailQueueProcessor.php >> /var/www/bestofxyz/public_html/logs/cron-email.log 2>&1
+# Recompute hot scores every 15 minutes
+*/15 * * * * php /var/www/bestofxyz/public_html/workers/cron/recompute-hot-scores.php >> /var/www/bestofxyz/public_html/logs/cron-scores.log 2>&1
 
-# Refresh daily stats at midnight
-0 0 * * * php /var/www/bestofxyz/public_html/cronjobs/RefreshDailyCustomerLoginStats.php >> /var/www/bestofxyz/public_html/logs/cron-stats.log 2>&1
+# Daily rank snapshot at midnight
+0 0 * * * php /var/www/bestofxyz/public_html/workers/cron/snapshot-ranks.php >> /var/www/bestofxyz/public_html/logs/cron-ranks.log 2>&1
 ```

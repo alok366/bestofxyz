@@ -66,10 +66,8 @@ function mix($path, $manifestDirectory = '/dist')
 
     if ($hotUrl):
         $devMap = [
-            '/fe-js/bundle.js'  => '/resources/js/User/App.jsx',
-            '/be-js/bundle.js'  => '/resources/js/Admin/App.jsx',
-            '/css/bundle.css'   => '/resources/less/App.less',
-            '/login-bundle.js'  => '/resources/js/User/Login.jsx',
+            '/fe-js/bundle.js' => '/resources/js/app/User/App.jsx',
+            '/css/bundle.css'  => '/resources/less/App.less',
         ];
         if (isset($devMap[$path])):
             return $hotUrl . $devMap[$path];
@@ -338,104 +336,7 @@ function parsePut()
     return $data;
 }
 
-/**
- * @deprecated Use $this->response instead.
- * Refer BizPlanController.php for usage.
- */
-function response() 
-{
-    return new class {
-        public function json(array $data, int $status = 200, array $headers = []) {
-            http_response_code($status);
-            header('Content-Type: application/json');
-            foreach ($headers as $key => $value) {
-                header("$key: $value");
-            }
-            echo json_encode($data);
-            exit;
-        }
 
-        public function text(string $content, int $status = 200, array $headers = []) {
-            http_response_code($status);
-            header('Content-Type: text/plain');
-            foreach ($headers as $key => $value) {
-                header("$key: $value");
-            }
-            echo $content;
-            exit;
-        }
-
-        public function file(string $filePath, string $downloadName = null) {
-            if (!file_exists($filePath)) {
-                http_response_code(404);
-                echo 'File not found.';
-                exit;
-            }
-            header('Content-Type: ' . mime_content_type($filePath));
-            if ($downloadName) {
-                header('Content-Disposition: attachment; filename="' . $downloadName . '"');
-            }
-            readfile($filePath);
-            exit;
-        }
-
-        public function createSuccess() {
-            http_response_code(201); 
-            header('Content-Type: application/json');
-            echo json_encode([
-                'data' => null,
-                'status' => 'success',
-                'message' => 'Resource created successfully'
-            ]);
-            exit;
-        }
-        
-        public function createError() {
-            http_response_code(500); 
-            header('Content-Type: application/json');
-            echo json_encode([
-                'data' => null,
-                'message' => 'Failed to create resource'
-            ]);
-            exit;
-        }
-        
-
-        public function updateSuccess() {
-            http_response_code(200);
-            header('Content-Type: application/json');
-            echo json_encode([
-                'data' => null,
-                'message' => 'Resource updated successfully'
-            ]);
-            exit;
-        }
-
-        public function updateError() {
-            http_response_code(500);
-            header('Content-Type: application/json');
-            echo json_encode([
-                'data' => null,
-                'message' => 'Failed to update resource'
-            ]);
-            exit;
-        }
-
-        public function notFound() {
-            http_response_code(404);
-            header('Content-Type: application/json');
-            echo json_encode([
-                'error' => 'Resource not found'
-            ]);
-            exit;
-        }
-    };
-}
-
-function rurlPath($rotationURL, $folder)
-{
-    return config('app.rotation.path') . "$rotationURL/" . config('app.rotation.folder') . "$folder/";
-}
 
 function baseUrl($relative_file_path = NULL)
 {

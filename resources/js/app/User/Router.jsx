@@ -9,7 +9,6 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Http } from '@shared/api';
 import { Layout } from '@widgets/layout';
 import { Header } from '@widgets/header';
 import { Footer } from '@widgets/footer';
@@ -37,11 +36,6 @@ const NotFound = () => (
   />
 );
 
-/**
- * Which engine owns a URL.
- */
-const engineForPath = () => 'broadcasts';
-
 function RouterInner() {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -54,12 +48,7 @@ function RouterInner() {
   }, [dispatch]);
 
   useEffect(() => {
-    Http.setMode(engineForPath());
-  }, []);
-
-  useEffect(() => {
     setCurrentPath(location.pathname);
-    Http.setMode(engineForPath());
     if (typeof window !== 'undefined') window.scrollTo(0, 0);
   }, [location.pathname]);
 

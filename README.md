@@ -197,11 +197,6 @@ php artisan migrate                     # Run pending migrations
 php artisan make:migration create_posts  # Create a new migration file
 php artisan storage:link                # Link public storage directory
 
-# Background Workers & Queues
-php artisan worker                      # Run queue worker process
-php artisan queue:failed                # List failed queue jobs
-php artisan queue:retry <job-id>        # Retry a failed job
-
 # Maintenance & Documentation
 php artisan optimize:clear              # Clear cached views and compiled files
 php artisan docs                        # Generate PHP API documentation

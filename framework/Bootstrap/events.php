@@ -1,10 +1,8 @@
 <?php
 
-use App\Events\UserCreated;
-
-
 global $events;
 
-$events->listen(UserCreated::class, [GenerateUserKeys::class, 'handle']);
+// Application event listeners can be registered here:
+// $events->listen(SomeEvent::class, [SomeListener::class, 'handle']);
 
 return $events;

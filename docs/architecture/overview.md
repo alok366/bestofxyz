@@ -81,7 +81,7 @@ All backend business features live in [`system/App`](../../system/App) and adher
 ```
 
 1. **Routing (`routes/`)**:
-   - Split logically into `routes/api/` (REST/JSON endpoints) and `routes/web/` (HTML shells and webhooks).
+   - Split logically into `routes/api/` (REST/JSON endpoints) and `routes/web/` (HTML shells).
 2. **Controllers (`system/App/Controllers/`)**:
    - Thin orchestration layer. Handles HTTP status codes, deserializes parameters, and invokes the appropriate service.
 3. **Services (`system/App/Services/`)**:

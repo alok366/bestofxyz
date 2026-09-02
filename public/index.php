@@ -30,8 +30,12 @@ try {
             'status' => 500,
         ]);
     } else {
-        $controller = new \App\Controllers\ErrorController();
-        $controller->show500($e);
+        http_response_code(500);
+        header('Content-Type: text/html; charset=utf-8');
+        $message = (config('app.env') === 'production' && !config('app.debug'))
+            ? 'An unexpected server error occurred.'
+            : htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+        echo "<!DOCTYPE html><html><head><title>500 Internal Server Error</title></head><body style=\"font-family: sans-serif; padding: 2rem;\"><h1>500 Internal Server Error</h1><p>{$message}</p></body></html>";
     }
     exit;
 }
