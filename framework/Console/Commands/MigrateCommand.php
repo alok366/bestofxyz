@@ -46,15 +46,20 @@ class MigrateCommand extends BaseCommand
     {
         return <<<'HELP'
   Usage:
-    php artisan migrate
+    php artisan migrate [options]
+
+  Options:
+    --force, -f           Run migrations without asking for confirmation
+    --no-interaction, -n  Do not ask any interactive question
 
   Description:
     Scans the migrations directory for .php files not yet recorded in
     the _system_updates table. Lists pending migrations with file sizes,
-    asks for confirmation, then executes each in order.
+    asks for confirmation (unless forced), then executes each in order.
 
   Examples:
-    php artisan migrate                     Run all pending migrations
+    php artisan migrate                     Run all pending migrations interactively
+    php artisan migrate --force             Run migrations non-interactively
     php artisan migrate 2>&1 | tee log.txt  Run migrations and save output to log
 HELP;
     }
@@ -68,6 +73,12 @@ HELP;
      */
     public function handle(array $args): int
     {
+        $options = $this->parseOptions($args);
+        $force = (bool) ($this->option($options, 'force', false)
+            || $this->option($options, 'no-interaction', false)
+            || in_array('-f', $args, true)
+            || in_array('-n', $args, true));
+
         $this->ensureTableExists();
 
         $files = glob($this->migrationsPath . "*.php");
@@ -101,7 +112,7 @@ HELP;
             $count++;
         endforeach;
 
-        if (!$this->confirm("\nRun these migrations?")) :
+        if (!$force && !$this->confirm("\nRun these migrations?")) :
             $this->info("Cancelled by user.");
             return 0;
         endif;
