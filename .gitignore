@@ -25,6 +25,7 @@ logs/*
 **/*_bck/*
 *.bck
 *.sh
+!scripts/docker-init.sh
 
 # Local-only credential / secret docs — never commit
 Credentials.pdf

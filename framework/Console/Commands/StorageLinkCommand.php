@@ -59,24 +59,26 @@ HELP;
     {
         $basePath = dirname(__DIR__, 3);
         $link = $basePath . '/public/storage';
-        $target = $basePath . '/storage';
+        $targetDir = $basePath . '/storage';
 
-        if (file_exists($link)) :
-            if (is_link($link)) :
-                $this->warn("Symlink already exists: public/storage -> storage/");
-                return 0;
-            endif;
-            $this->error("Error: public/storage exists but is not a symlink. Remove it manually first.");
-            return 1;
-        endif;
-
-        if (!is_dir($target)) :
+        if (!is_dir($targetDir)) :
             $this->error("Error: storage/ directory not found.");
             return 1;
         endif;
 
-        symlink($target, $link);
-        $this->success("Symlink created: public/storage -> storage/");
+        if (is_link($link)) :
+            if (readlink($link) === '../storage') :
+                $this->warn("Symlink already exists: public/storage -> ../storage");
+                return 0;
+            endif;
+            unlink($link);
+        elseif (file_exists($link)) :
+            $this->error("Error: public/storage exists but is not a symlink. Remove it manually first.");
+            return 1;
+        endif;
+
+        symlink('../storage', $link);
+        $this->success("Symlink created: public/storage -> ../storage");
 
         return 0;
     }

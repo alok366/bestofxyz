@@ -1,0 +1,11 @@
+.git
+.github
+node_modules
+vendor
+storage/cache/*
+storage/logs/*
+logs/*
+.env
+.env.*
+!.env.sample
+*.zip
