@@ -8,4 +8,25 @@ logs/*
 .env
 .env.*
 !.env.sample
+
+# Build artifacts & large files
 *.zip
+public/dist
+
+# Directories not needed in build context
+docs
+tests
+database
+instructions
+guidelines
+resources
+docker
+
+# Config & tooling files
+*.md
+.phpunit.result.cache
+.stylelint*
+eslint.config.*
+vite.config.*
+vitest.config.*
+Makefile

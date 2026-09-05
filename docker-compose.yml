@@ -25,6 +25,11 @@ services:
       REDIS_HOST: ${REDIS_HOST:-redis}
     networks:
       - backend-network
+    healthcheck:
+      test: ["CMD-SHELL", "kill -0 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     depends_on:
       db:
         condition: service_healthy
@@ -46,7 +51,8 @@ services:
     networks:
       - backend-network
     depends_on:
-      - app
+      app:
+        condition: service_healthy
 
   # ----------------------------------------------------------------------
   # Database (MariaDB 11.4 LTS)
