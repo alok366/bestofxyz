@@ -93,17 +93,53 @@
 
 ## Getting Started
 
-### Prerequisites
+### Option A: Docker Quick Start (Recommended)
+
+The project includes a complete Docker Compose development environment (PHP 8.4-FPM, Nginx 1.27, MariaDB 11.4 LTS, Redis 7, phpMyAdmin, Node 22):
+
+1. **Bootstrap the entire environment with one command**:
+   ```bash
+   make init
+   ```
+   This automatically creates your `.env` from `.env.docker.example`, configures directory permissions and relative storage symlinks, builds and starts containers, installs Composer and npm dependencies, runs database migrations, and optimizes application caches.
+
+2. **Access local services**:
+   - **Web Application**: `http://localhost:8000`
+   - **phpMyAdmin**: `http://localhost:8082`
+   - **Documentation**: `http://localhost:8000/docs/`
+   - **MariaDB (Direct)**: `127.0.0.1:3308` (User: `bestofxyz_user`, DB: `bestofxyz`)
+   - **Redis (Direct)**: `127.0.0.1:6380`
+
+3. **Daily Docker management commands**:
+   ```bash
+   make up             # Start containers and show URLs
+   make down           # Stop and remove containers
+   make ps             # Check container health status
+   make logs [svc]     # Tail container logs (e.g. make logs app)
+   make bash           # Shell into PHP container (as www-data)
+   make bash-node      # Shell into Node container
+   make artisan <cmd>  # Run any Artisan command (e.g. make artisan migrate)
+   make composer <cmd> # Run any Composer command
+   make npm <cmd>      # Run any npm command
+   make test           # Run PHPUnit test suite
+   make test-fe        # Run frontend Vitest suite
+   ```
+
+---
+
+### Option B: Native Host Installation
+
+#### Prerequisites
 
 Ensure you have the following installed on your machine:
-- **PHP**: `^8.2` with `pdo_mysql`, `mbstring`, `openssl`, `curl`, `redis` extensions
+- **PHP**: `^8.2` or `^8.4` with `pdo_mysql`, `mbstring`, `openssl`, `curl`, `redis`, `gd`, `zip`, `bcmath`, `pcntl`, `intl` extensions
 - **Composer**: `^2.5`
 - **Node.js**: `^20.0.0` or `^22.0.0`
 - **npm**: `^10.0.0`
-- **MySQL**: `^8.0`
-- **Redis**: `^6.0` (optional for local file cache, recommended)
+- **MySQL / MariaDB**: MySQL `^8.0` or MariaDB `^10.11` / `^11.4`
+- **Redis**: `^6.0` or `^7.0` (optional for local file cache, recommended)
 
-### Installation
+#### Installation
 
 1. **Clone the repository**:
    ```bash
